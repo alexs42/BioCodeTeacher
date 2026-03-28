@@ -1,0 +1,19 @@
+{
+  "name": "codeteacher",
+  "version": "1.0.0",
+  "description": "An educational code explanation tool powered by AI that helps developers learn and understand code through interactive line-by-line explanations, architectural analysis, and contextual chat.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:21149/git/alexs42/CodeTeacher"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}

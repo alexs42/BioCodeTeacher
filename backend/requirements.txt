@@ -1,0 +1,14 @@
+fastapi==0.109.0
+uvicorn[standard]==0.34.3
+websockets==14.2
+httpx==0.26.0
+pydantic==2.10.6
+python-multipart==0.0.6
+gitpython==3.1.41
+pathspec==0.12.1
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+httpx[http2]==0.26.0

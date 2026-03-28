@@ -1,0 +1,1 @@
+"""CodeTeacher backend tests package."""
