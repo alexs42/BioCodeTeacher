@@ -1,6 +1,6 @@
 """
-CodeTeacher Backend - FastAPI application entry point.
-Provides API endpoints for code explanation, repository management, and chat.
+BioCodeTeacher Backend - FastAPI application entry point.
+Provides API endpoints for bioinformatics code explanation, repository management, and chat.
 """
 
 import os
@@ -25,8 +25,8 @@ def get_base_path() -> str:
 
 
 app = FastAPI(
-    title="CodeTeacher API",
-    description="Educational code explanation API powered by frontier AI models",
+    title="BioCodeTeacher API",
+    description="Bioinformatics code explanation API for single-cell, spatial, and pathology analysis",
     version="1.0.0",
 )
 
@@ -79,4 +79,4 @@ else:
     @app.get("/")
     async def root():
         """Health check endpoint (dev mode only)."""
-        return {"status": "ok", "service": "CodeTeacher API"}
+        return {"status": "ok", "service": "BioCodeTeacher API"}

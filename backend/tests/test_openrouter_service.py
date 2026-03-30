@@ -58,7 +58,7 @@ class TestOpenRouterServiceConfig:
         service = OpenRouterService("sk-test-123")
         assert service.headers["Authorization"] == "Bearer sk-test-123"
         assert service.headers["Content-Type"] == "application/json"
-        assert service.headers["X-Title"] == "CodeTeacher"
+        assert service.headers["X-Title"] == "BioCodeTeacher"
         assert "HTTP-Referer" in service.headers
 
     def test_api_url_constant(self):

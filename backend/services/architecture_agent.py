@@ -27,6 +27,7 @@ from models.schemas import ArchitectureContextSummary, ComponentInfo
 
 # Framework detection: filename -> framework name
 FRAMEWORK_SIGNATURES = {
+    # -- Web / general software frameworks --
     "manage.py": "Django",
     "wsgi.py": "Django",
     "asgi.py": "Django/ASGI",
@@ -58,6 +59,24 @@ FRAMEWORK_SIGNATURES = {
     "Dockerfile": "Docker",
     "docker-compose.yml": "Docker Compose",
     "docker-compose.yaml": "Docker Compose",
+    # -- Bioinformatics pipeline/workflow frameworks --
+    "Snakefile": "Snakemake",
+    "snakefile": "Snakemake",
+    "nextflow.config": "Nextflow",
+    "main.nf": "Nextflow",
+    "meta.yml": "nf-core Module",
+    "environment.yml": "Conda Environment",
+    "conda.yml": "Conda Environment",
+    # -- R / Bioconductor --
+    "renv.lock": "renv (R)",
+    "DESCRIPTION": "R Package",
+    ".Rprofile": "R Project",
+    "_targets.R": "targets (R pipeline)",
+    # -- Jupyter / notebook-driven --
+    ".jupyter": "Jupyter",
+    # -- Bioinformatics config markers --
+    "cellranger-count.sh": "Cell Ranger",
+    "spaceranger-count.sh": "Space Ranger",
 }
 
 # Config/manifest files to read for context
@@ -65,14 +84,24 @@ CONFIG_FILES = [
     "package.json", "pyproject.toml", "requirements.txt", "setup.py", "setup.cfg",
     "Cargo.toml", "go.mod", "pom.xml", "build.gradle", "Gemfile",
     "composer.json", "pubspec.yaml",
+    # Bioinformatics-specific config
+    "environment.yml", "conda.yml", "Snakefile", "nextflow.config",
+    "renv.lock", "DESCRIPTION", "_targets.R",
 ]
 
 # Significant directory names
 SIGNIFICANT_DIRS = {
+    # General software
     "src", "lib", "app", "api", "routes", "routers", "controllers",
     "components", "models", "services", "utils", "helpers", "middleware",
     "tests", "test", "specs", "views", "templates", "static", "public",
     "config", "core", "domain", "infrastructure", "handlers", "pages",
+    # Bioinformatics-specific
+    "workflows", "rules", "pipelines", "analysis", "notebooks", "scripts",
+    "data", "results", "figures", "envs", "schemas", "modules", "bin",
+    "resources", "references", "annotations", "reports", "qc",
+    "preprocessing", "clustering", "integration", "visualization",
+    "subworkflows", "processes",
 }
 
 
@@ -332,25 +361,50 @@ class ArchitectureAgent:
         entry_names = {"main.py", "app.py", "index.js", "index.ts", "main.go", "main.rs",
                        "server.py", "server.js", "server.ts", "App.tsx", "App.jsx"}
         config_names = set(CONFIG_FILES) | {"README.md", "readme.md"}
+        # Bioinformatics pipeline files
+        pipeline_names = {"Snakefile", "snakefile", "main.nf", "nextflow.config",
+                          "_targets.R", "run_pipeline.sh", "run_analysis.py"}
+        # Bioinformatics analysis pattern keywords in filenames
+        bio_keywords = {"qc", "filter", "normalize", "cluster", "umap", "pca",
+                        "de", "differential", "trajectory", "velocity", "integrate",
+                        "annotate", "celltype", "spatial", "segment", "pathology",
+                        "preprocess", "analysis", "workflow"}
 
         for path in self.repo_path.rglob("*"):
             if not path.is_file():
                 continue
             rel = str(path.relative_to(self.repo_path))
             name = path.name
+            stem = path.stem.lower()
             # Skip deep nesting and known dirs
             if any(skip in rel for skip in ['node_modules', '__pycache__', '.git', 'venv', 'dist']):
                 continue
-            if name in entry_names:
+            if name in pipeline_names:
+                selected.append(SelectedFile(path=rel, reason="Pipeline definition"))
+            elif name in entry_names:
                 selected.append(SelectedFile(path=rel, reason="Entry point"))
             elif name in config_names:
                 selected.append(SelectedFile(path=rel, reason="Configuration"))
+            elif name.endswith('.ipynb'):
+                selected.append(SelectedFile(path=rel, reason="Analysis notebook"))
+            elif name.endswith('.smk'):
+                selected.append(SelectedFile(path=rel, reason="Snakemake rule"))
+            elif name.endswith('.nf'):
+                selected.append(SelectedFile(path=rel, reason="Nextflow process"))
+            elif name.endswith('.Rmd') or name.endswith('.qmd'):
+                selected.append(SelectedFile(path=rel, reason="Analysis notebook (R)"))
+            elif any(kw in stem for kw in bio_keywords):
+                selected.append(SelectedFile(path=rel, reason="Analysis step"))
+            elif any(d in rel for d in ['workflows/', 'rules/', 'pipelines/']):
+                selected.append(SelectedFile(path=rel, reason="Pipeline component"))
+            elif any(d in rel for d in ['notebooks/', 'analysis/']):
+                selected.append(SelectedFile(path=rel, reason="Analysis"))
             elif any(d in rel for d in ['routers/', 'routes/', 'controllers/', 'handlers/']):
                 selected.append(SelectedFile(path=rel, reason="Route handler"))
             elif any(d in rel for d in ['models/', 'schemas/']):
                 selected.append(SelectedFile(path=rel, reason="Data model"))
-            elif any(d in rel for d in ['services/']):
-                selected.append(SelectedFile(path=rel, reason="Service layer"))
+            elif any(d in rel for d in ['services/', 'scripts/']):
+                selected.append(SelectedFile(path=rel, reason="Service/Script"))
 
             if len(selected) >= self.max_files:
                 break

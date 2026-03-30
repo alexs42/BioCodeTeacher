@@ -44,7 +44,7 @@ export default function SetupModal() {
       <div className="bg-ct-surface border border-ct-border rounded-xl max-w-lg w-full shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-ct-border">
-          <h2 className="text-xl font-semibold">Welcome to CodeTeacher</h2>
+          <h2 className="text-xl font-semibold">Welcome to <span className="text-ct-primary">Bio</span>CodeTeacher</h2>
           {canClose && (
             <button
               onClick={() => setShowSetupModal(false)}
@@ -59,8 +59,8 @@ export default function SetupModal() {
         <div className="p-6 space-y-6">
           {/* Introduction */}
           <p className="text-ct-text-secondary">
-            CodeTeacher helps you learn code by explaining it line by line using Claude AI.
-            Enter your OpenRouter API key to get started.
+            BioCodeTeacher helps you understand bioinformatics code — single-cell analysis, spatial transcriptomics, digital pathology.
+            It explains the biological reasoning behind every line. Enter your OpenRouter API key to get started.
           </p>
 
           {/* OpenRouter API Key */}
@@ -148,10 +148,10 @@ export default function SetupModal() {
           <div className="bg-ct-bg border border-ct-border rounded-lg p-4 text-sm text-ct-text-secondary">
             <p className="font-medium text-ct-text mb-2">How it works:</p>
             <ol className="list-decimal list-inside space-y-1">
-              <li>Open a local repository or clone from GitHub</li>
-              <li>Browse and select a file to view</li>
-              <li>Click on any line to get an AI explanation</li>
-              <li>Use the chat to ask follow-up questions</li>
+              <li>Open a bioinformatics project (Scanpy, Seurat, Snakemake, etc.)</li>
+              <li>Browse and select an analysis script or notebook</li>
+              <li>Click on any line — get biological reasoning, data state changes, parameter guidance</li>
+              <li>Use the chat to ask follow-up questions about the biology</li>
             </ol>
           </div>
         </div>

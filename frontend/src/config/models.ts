@@ -19,7 +19,7 @@ export interface ModelOption {
 }
 
 /**
- * Default models available in CodeTeacher.
+ * Default models available in BioCodeTeacher.
  * These are pre-configured frontier models from OpenRouter.
  */
 export const DEFAULT_MODELS: ModelOption[] = [

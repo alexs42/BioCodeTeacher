@@ -1,7 +1,7 @@
 {
-  "name": "codeteacher",
+  "name": "biocodeteacher",
   "version": "1.0.0",
-  "description": "An educational code explanation tool powered by AI that helps developers learn and understand code through interactive line-by-line explanations, architectural analysis, and contextual chat.",
+  "description": "A bioinformatics code teaching tool powered by AI — helps graduate students and postdocs understand single-cell, spatial transcriptomics, and digital pathology code through interactive explanations.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

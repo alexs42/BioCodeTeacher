@@ -1,11 +1,11 @@
 @echo off
-REM CodeTeacher Project Verification Script
+REM BioCodeTeacher Project Verification Script
 REM Run this to verify the project is fully functional
 
 cd /d "%~dp0"
 
 echo ==========================================
-echo   CodeTeacher Project Verification
+echo   BioCodeTeacher Project Verification
 echo ==========================================
 echo.
 

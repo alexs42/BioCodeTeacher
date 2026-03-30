@@ -1,11 +1,11 @@
 #!/bin/bash
-# CodeTeacher Project Verification Script
+# BioCodeTeacher Project Verification Script
 # Run this to verify the project is fully functional
 
 set -e
 
 echo "=========================================="
-echo "  CodeTeacher Project Verification"
+echo "  BioCodeTeacher Project Verification"
 echo "=========================================="
 echo ""
 

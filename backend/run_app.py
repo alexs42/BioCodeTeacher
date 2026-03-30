@@ -1,5 +1,5 @@
 """
-CodeTeacher entry point for packaged (PyInstaller) and direct execution.
+BioCodeTeacher entry point for packaged (PyInstaller) and direct execution.
 Starts uvicorn serving the FastAPI app and opens the default browser.
 """
 
@@ -41,12 +41,12 @@ def open_browser_delayed(port: int, delay: float = 1.5):
 def main():
     port = find_free_port(8765)
 
-    print("==========================================")
-    print("  CodeTeacher")
-    print("==========================================")
+    print("================================================")
+    print("  BioCodeTeacher — Bioinformatics Code Educator")
+    print("================================================")
     print(f"  Server: http://localhost:{port}")
     print("  Press Ctrl+C to stop.")
-    print("==========================================")
+    print("================================================")
 
     # Open browser in background thread
     threading.Thread(target=open_browser_delayed, args=(port,), daemon=True).start()

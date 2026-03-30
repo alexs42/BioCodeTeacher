@@ -1,5 +1,5 @@
 /**
- * API service for communicating with the CodeTeacher backend.
+ * API service for communicating with the BioCodeTeacher backend.
  */
 
 const API_BASE = '/api'

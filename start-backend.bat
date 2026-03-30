@@ -1,5 +1,5 @@
 @echo off
-REM Start CodeTeacher Backend
+REM Start BioCodeTeacher Backend
 
 cd /d "%~dp0backend"
 
@@ -16,5 +16,5 @@ REM Install dependencies
 pip install -q -r requirements.txt
 
 REM Start the server
-echo Starting CodeTeacher API server on http://localhost:8000
+echo Starting BioCodeTeacher API server on http://localhost:8000
 uvicorn main:app --reload --host 0.0.0.0 --port 8000

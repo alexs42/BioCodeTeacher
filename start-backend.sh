@@ -1,5 +1,5 @@
 #!/bin/bash
-# Start CodeTeacher Backend - Single command setup & run
+# Start BioCodeTeacher Backend - Single command setup & run
 
 set -e  # Exit on error
 
@@ -14,5 +14,5 @@ fi
 # Activate and install deps quietly, then start server
 source venv/bin/activate
 pip install -q -r requirements.txt
-echo "Starting CodeTeacher API server on http://localhost:8000"
+echo "Starting BioCodeTeacher API server on http://localhost:8000"
 uvicorn main:app --reload --host 0.0.0.0 --port 8000

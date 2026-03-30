@@ -24,7 +24,7 @@ class TestReposEndpoint:
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "ok"
-        assert data["service"] == "CodeTeacher API"
+        assert data["service"] == "BioCodeTeacher API"
 
     def test_load_local_repo_success(self, client: TestClient, temp_repo: str):
         """Test loading a local repository successfully."""

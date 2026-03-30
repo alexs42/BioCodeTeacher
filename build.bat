@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableDelayedExpansion
 REM ============================================
-REM  Build CodeTeacher as a packaged application
+REM  Build BioCodeTeacher as a packaged application
 REM ============================================
 
 echo [1/5] Checking prerequisites...
@@ -49,7 +49,25 @@ echo       npm:    OK
 echo.
 echo [2/5] Building frontend...
 cd /d "%~dp0frontend"
+
+REM Pre-clean node_modules to avoid Dropbox partial-sync corruption.
+REM lucide-react and other packages can end up with missing icon files
+REM when Dropbox locks files mid-install.
+if exist "node_modules" (
+    echo       Cleaning node_modules for fresh install...
+    rd /s /q "node_modules" 2>nul
+    if exist "node_modules" (
+        echo       Retry - node_modules locked, waiting 3s...
+        timeout /t 3 /nobreak >nul
+        rd /s /q "node_modules" 2>nul
+    )
+)
+
 call npm install
+if errorlevel 1 (
+    echo ERROR: npm install failed
+    exit /b 1
+)
 
 REM Pre-clean frontend/dist to avoid EBUSY from Dropbox locks during Vite build
 if exist "dist" (
@@ -117,22 +135,22 @@ echo       Build environment: OK
 
 echo.
 echo [4/5] Cleaning previous build output...
-REM Pre-clean dist/CodeTeacher to avoid PermissionError from Dropbox file locks.
+REM Pre-clean dist/BioCodeTeacher to avoid PermissionError from Dropbox file locks.
 REM PyInstaller's --noconfirm tries this itself but can't retry on locked files.
-if exist "dist\CodeTeacher" (
+if exist "dist\BioCodeTeacher" (
     set "CLEAN_OK=0"
     for /L %%i in (1,1,3) do (
         if !CLEAN_OK! EQU 0 (
-            rd /s /q "dist\CodeTeacher" 2>nul
-            if not exist "dist\CodeTeacher" set "CLEAN_OK=1"
+            rd /s /q "dist\BioCodeTeacher" 2>nul
+            if not exist "dist\BioCodeTeacher" set "CLEAN_OK=1"
             if !CLEAN_OK! EQU 0 (
                 echo       Retry %%i/3 - dist folder locked, waiting 3s...
                 timeout /t 3 /nobreak >nul
             )
         )
     )
-    if exist "dist\CodeTeacher" (
-        echo ERROR: Cannot delete dist\CodeTeacher - another process has it locked.
+    if exist "dist\BioCodeTeacher" (
+        echo ERROR: Cannot delete dist\BioCodeTeacher - another process has it locked.
         echo        Close Dropbox or any explorer windows showing that folder, then retry.
         exit /b 1
     )
@@ -143,7 +161,7 @@ if exist "dist\CodeTeacher" (
 
 echo.
 echo [5/5] Running PyInstaller...
-pyinstaller codeteacher.spec --noconfirm
+pyinstaller biocodeteacher.spec --noconfirm
 
 if errorlevel 1 (
     echo ERROR: PyInstaller build failed
@@ -153,8 +171,8 @@ if errorlevel 1 (
 echo.
 echo ============================================
 echo  Build complete!
-echo  Output: dist\CodeTeacher\CodeTeacher.exe
+echo  Output: dist\BioCodeTeacher\BioCodeTeacher.exe
 echo ============================================
 echo.
-echo To distribute: zip the dist\CodeTeacher folder.
-echo Users just unzip and double-click CodeTeacher.exe.
+echo To distribute: zip the dist\BioCodeTeacher folder.
+echo Users just unzip and double-click BioCodeTeacher.exe.

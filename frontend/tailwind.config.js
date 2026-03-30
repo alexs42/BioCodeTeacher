@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // CodeTeacher custom colors
+        // BioCodeTeacher custom colors
         'ct-bg': 'var(--ct-bg)',
         'ct-surface': 'var(--ct-surface)',
         'ct-surface-2': 'var(--ct-surface-2)',
@@ -23,10 +23,16 @@ export default {
         'ct-token': 'var(--ct-token)',
         'ct-param': 'var(--ct-param)',
         'ct-concept': 'var(--ct-concept)',
+        // Bio-specific section colors
+        'bct-biology': 'var(--bct-biology)',
+        'bct-data': 'var(--bct-data)',
+        'bct-parameter': 'var(--bct-parameter)',
+        'bct-pipeline': 'var(--bct-pipeline)',
+        'bct-crosstool': 'var(--bct-crosstool)',
       },
       fontFamily: {
-        'sans': ['DM Sans', 'sans-serif'],
-        'display': ['Bricolage Grotesque', 'sans-serif'],
+        'sans': ['Plus Jakarta Sans', 'sans-serif'],
+        'display': ['Instrument Sans', 'sans-serif'],
         'mono': ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
       },
     },

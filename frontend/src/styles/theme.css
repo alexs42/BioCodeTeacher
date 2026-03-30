@@ -3,66 +3,86 @@
 @tailwind utilities;
 
 /* ============================================================
-   CodeTeacher Theme — "Code Observatory"
-   Dark, precise, scientific. Warm amber accents on cool blues.
+   BioCodeTeacher Theme — "Research Lab"
+   Fluorescence microscopy aesthetic: teal/cyan glow on deep darks.
+   Scientific, precise, evocative of living cells under a confocal.
    ============================================================ */
 
 :root {
-  /* Dark theme (default) */
-  --ct-bg: #0a0d12;
-  --ct-surface: #12161e;
-  --ct-surface-2: #1a1f2a;
-  --ct-border: #252d3a;
-  --ct-text: #e2e6f0;
-  --ct-text-secondary: #7a849a;
-  --ct-primary: #5b9cf5;
-  --ct-accent: #7ee787;
-  --ct-warm: #e8a44a;
+  /* Deep dark backgrounds (microscope field of view) */
+  --ct-bg: #060a10;
+  --ct-surface: #0c1118;
+  --ct-surface-2: #131a24;
+  --ct-border: #1a2536;
+  --ct-text: #dfe6f2;
+  --ct-text-secondary: #607590;
 
-  /* Explanation section colors */
-  --ct-purpose: #5b9cf5;
-  --ct-token: #7ee787;
-  --ct-param: #e8a44a;
-  --ct-concept: #d2a8ff;
+  /* Primary: teal (fluorescence-inspired, GFP/FITC channel) */
+  --ct-primary: #2dd4bf;
+  /* Accent: indigo (DAPI channel) */
+  --ct-accent: #818cf8;
+  /* Warm: amber (for warnings, PE channel) */
+  --ct-warm: #f59e0b;
+
+  /* Explanation section colors — mapped to microscopy channels */
+  --ct-purpose: #2dd4bf;    /* Teal — biological significance */
+  --ct-token: #818cf8;      /* Indigo — data state */
+  --ct-param: #f59e0b;      /* Amber — parameter guide */
+  --ct-concept: #34d399;    /* Emerald — pipeline position */
 
   /* Code highlighting */
-  --ct-code-bg: #0a0d12;
-  --ct-code-keyword: #ff7b72;
-  --ct-code-string: #a5d6ff;
-  --ct-code-comment: #7a849a;
-  --ct-code-function: #d2a8ff;
-  --ct-code-number: #79c0ff;
+  --ct-code-bg: #060a10;
+  --ct-code-keyword: #f472b6;
+  --ct-code-string: #7dd3fc;
+  --ct-code-comment: #607590;
+  --ct-code-function: #c4b5fd;
+  --ct-code-number: #5eead4;
 
-  /* Glow effects */
-  --ct-glow-primary: rgba(91, 156, 245, 0.1);
-  --ct-glow-warm: rgba(232, 164, 74, 0.08);
+  /* Glow effects (fluorescence emission) */
+  --ct-glow-primary: rgba(45, 212, 191, 0.10);
+  --ct-glow-warm: rgba(245, 158, 11, 0.06);
+  --ct-glow-accent: rgba(129, 140, 248, 0.08);
+
+  /* Section-specific colors for explanation panels */
+  --bct-biology: #2dd4bf;
+  --bct-data: #818cf8;
+  --bct-parameter: #f59e0b;
+  --bct-pipeline: #34d399;
+  --bct-crosstool: #f472b6;
 }
 
 .light {
-  --ct-bg: #fafbfc;
-  --ct-surface: #f0f2f5;
-  --ct-surface-2: #e8ebf0;
-  --ct-border: #d0d7de;
-  --ct-text: #1a1f2b;
-  --ct-text-secondary: #5a6577;
-  --ct-primary: #2563eb;
-  --ct-accent: #16a34a;
+  --ct-bg: #f8fafb;
+  --ct-surface: #eef2f5;
+  --ct-surface-2: #e2e8ed;
+  --ct-border: #c8d4de;
+  --ct-text: #131a24;
+  --ct-text-secondary: #4a6175;
+  --ct-primary: #0d9488;
+  --ct-accent: #6366f1;
   --ct-warm: #d97706;
 
-  --ct-purpose: #2563eb;
-  --ct-token: #16a34a;
+  --ct-purpose: #0d9488;
+  --ct-token: #6366f1;
   --ct-param: #d97706;
-  --ct-concept: #7c3aed;
+  --ct-concept: #059669;
 
-  --ct-code-bg: #f0f2f5;
-  --ct-code-keyword: #cf222e;
-  --ct-code-string: #0a3069;
-  --ct-code-comment: #5a6577;
-  --ct-code-function: #7c3aed;
-  --ct-code-number: #0550ae;
+  --ct-code-bg: #eef2f5;
+  --ct-code-keyword: #be185d;
+  --ct-code-string: #0c4a6e;
+  --ct-code-comment: #4a6175;
+  --ct-code-function: #6d28d9;
+  --ct-code-number: #0d9488;
 
-  --ct-glow-primary: rgba(37, 99, 235, 0.08);
-  --ct-glow-warm: rgba(217, 119, 6, 0.06);
+  --ct-glow-primary: rgba(13, 148, 136, 0.08);
+  --ct-glow-warm: rgba(217, 119, 6, 0.05);
+  --ct-glow-accent: rgba(99, 102, 241, 0.06);
+
+  --bct-biology: #0d9488;
+  --bct-data: #6366f1;
+  --bct-parameter: #d97706;
+  --bct-pipeline: #059669;
+  --bct-crosstool: #be185d;
 }
 
 /* ---- Global styles ---- */
@@ -76,14 +96,14 @@ body {
   padding: 0;
   background-color: var(--ct-bg);
   color: var(--ct-text);
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Display font for headings and labels */
+/* Display font — geometric, modern, scientific */
 .font-display, h1, h2, h3 {
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: 'Instrument Sans', sans-serif;
 }
 
 /* Code font */
@@ -119,10 +139,10 @@ code, pre, .font-mono {
 
 .sash-container .sash:hover {
   background-color: var(--ct-primary) !important;
-  box-shadow: 0 0 8px var(--ct-glow-primary);
+  box-shadow: 0 0 12px var(--ct-glow-primary);
 }
 
-/* Legacy Resizer classes (if still used) */
+/* Legacy Resizer classes */
 .Resizer {
   background: var(--ct-border);
   opacity: 1;
@@ -135,11 +155,14 @@ code, pre, .font-mono {
 .Resizer.vertical { width: 6px; margin: 0 -3px; cursor: col-resize; }
 .Resizer.horizontal { height: 6px; margin: -3px 0; cursor: row-resize; }
 
-/* ---- Dot grid background texture ---- */
+/* ---- Cell grid background texture (replaces dot grid) ----
+   Subtle radial pattern evoking cells under a microscope */
 
 .ct-dotgrid {
-  background-image: radial-gradient(circle, var(--ct-border) 0.4px, transparent 0.4px);
-  background-size: 20px 20px;
+  background-image:
+    radial-gradient(ellipse 18px 18px at 12px 12px, transparent 7px, var(--ct-border) 7px, var(--ct-border) 7.4px, transparent 7.4px);
+  background-size: 28px 28px;
+  opacity: 0.35;
 }
 
 /* ---- Tier transition animations ---- */
@@ -159,18 +182,38 @@ code, pre, .font-mono {
   animation: tier-enter 0.25s ease-out;
 }
 
-/* ---- Phase tracker animations ---- */
+/* ---- Phase tracker animations — teal fluorescence pulse ---- */
 
 @keyframes phase-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 var(--ct-glow-primary); }
-  50% { box-shadow: 0 0 0 6px transparent; }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.25); }
+  50% { box-shadow: 0 0 0 8px transparent; }
 }
 
 .phase-active {
   animation: phase-pulse 2s ease-in-out infinite;
 }
 
-/* ---- Streaming cursor ---- */
+/* ---- Scanning animation (horizontal sweep during analysis) ---- */
+
+@keyframes scan-sweep {
+  0% { transform: translateX(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ct-primary), transparent);
+  animation: scan-sweep 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ---- Streaming cursor — teal blink ---- */
 
 @keyframes cursor-blink {
   0%, 40% { opacity: 1; }
@@ -182,7 +225,7 @@ code, pre, .font-mono {
   display: inline-block;
   width: 2px;
   height: 1em;
-  background: var(--ct-warm);
+  background: var(--ct-primary);
   animation: cursor-blink 0.8s ease-in-out infinite;
   margin-left: 2px;
   vertical-align: text-bottom;
@@ -198,7 +241,7 @@ code, pre, .font-mono {
 
 .markdown-content h2 {
   color: var(--ct-primary);
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: 'Instrument Sans', sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
   margin-top: 1.5rem;
@@ -209,7 +252,7 @@ code, pre, .font-mono {
 
 .markdown-content h3 {
   color: var(--ct-text);
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: 'Instrument Sans', sans-serif;
   font-size: 1rem;
   font-weight: 600;
   margin-top: 1rem;
@@ -269,19 +312,57 @@ code, pre, .font-mono {
   padding: 0;
 }
 
-/* ---- Header glow line ---- */
+/* ---- Section-specific colored borders for explanation panels ---- */
+
+.markdown-content h2:has(+ .bio-section) { color: var(--bct-biology); }
+
+.section-biology { border-left: 3px solid var(--bct-biology); padding-left: 0.75rem; }
+.section-data { border-left: 3px solid var(--bct-data); padding-left: 0.75rem; }
+.section-parameter { border-left: 3px solid var(--bct-parameter); padding-left: 0.75rem; }
+.section-pipeline { border-left: 3px solid var(--bct-pipeline); padding-left: 0.75rem; }
+.section-crosstool { border-left: 3px solid var(--bct-crosstool); padding-left: 0.75rem; }
+
+/* ---- Header emission line — confocal laser scan aesthetic ---- */
 
 .header-glow {
+  position: relative;
+  height: 2px;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--ct-primary) 20%,
-    var(--ct-warm) 50%,
-    var(--ct-primary) 80%,
+    rgba(45, 212, 191, 0.2) 15%,
+    var(--ct-primary) 30%,
+    var(--ct-accent) 50%,
+    var(--ct-primary) 70%,
+    rgba(45, 212, 191, 0.2) 85%,
     transparent 100%
   );
-  height: 1px;
-  opacity: 0.4;
+  opacity: 0.7;
+  box-shadow:
+    0 0 8px rgba(45, 212, 191, 0.15),
+    0 1px 12px rgba(45, 212, 191, 0.08);
+}
+
+/* Slow-sweep highlight traveling across the emission line */
+@keyframes glow-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.header-glow-sweep {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 100%
+  );
+  animation: glow-sweep 6s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* Hide mermaid error elements */
@@ -289,8 +370,8 @@ code, pre, .font-mono {
   display: none !important;
 }
 
-/* ---- Selected line highlight (Monaco editor) ---- */
+/* ---- Selected line highlight (Monaco editor) — teal ---- */
 .selected-line-highlight {
-  background: rgba(91, 156, 245, 0.12) !important;
+  background: rgba(45, 212, 191, 0.10) !important;
   border-left: 2px solid var(--ct-primary);
 }

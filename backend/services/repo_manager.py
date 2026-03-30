@@ -16,6 +16,7 @@ from models.schemas import FileNode
 
 # Language detection by file extension
 LANGUAGE_MAP = {
+    # -- General programming languages --
     ".py": "python",
     ".js": "javascript",
     ".jsx": "javascript",
@@ -34,6 +35,9 @@ LANGUAGE_MAP = {
     ".swift": "swift",
     ".kt": "kotlin",
     ".scala": "scala",
+    ".r": "r",
+    ".R": "r",
+    # -- Web / markup / config --
     ".html": "html",
     ".css": "css",
     ".scss": "scss",
@@ -54,6 +58,46 @@ LANGUAGE_MAP = {
     ".cfg": "ini",
     ".vue": "vue",
     ".svelte": "svelte",
+    # -- Bioinformatics sequence / genomic formats --
+    ".fasta": "fasta",
+    ".fa": "fasta",
+    ".fna": "fasta",
+    ".faa": "fasta",
+    ".fastq": "fastq",
+    ".fq": "fastq",
+    ".vcf": "vcf",
+    ".gff": "gff",
+    ".gff3": "gff",
+    ".gtf": "gtf",
+    ".sam": "sam",
+    ".bed": "bed",
+    ".bedgraph": "bed",
+    ".wig": "wig",
+    ".bigwig": "wig",
+    ".maf": "maf",
+    # -- Single-cell / spatial data containers --
+    ".h5ad": "python",     # AnnData (HDF5-backed)
+    ".h5": "hdf5",         # Generic HDF5
+    ".hdf5": "hdf5",
+    ".loom": "python",     # Loom format
+    ".rds": "r",           # R serialized objects (Seurat, SCE)
+    ".rda": "r",           # R data archive
+    ".mtx": "plaintext",   # Market Exchange (sparse matrix, 10X)
+    # -- Workflow languages --
+    ".smk": "python",      # Snakemake rules (Python superset)
+    ".nf": "groovy",       # Nextflow (Groovy-based)
+    ".cwl": "yaml",        # CWL workflows (YAML-based)
+    ".wdl": "wdl",         # WDL workflows
+    # -- Notebook / literate programming --
+    ".ipynb": "json",      # Jupyter notebooks (JSON format)
+    ".Rmd": "markdown",    # R Markdown
+    ".rmd": "markdown",
+    ".qmd": "markdown",    # Quarto documents
+    # -- Pathology / imaging --
+    ".svs": "plaintext",   # Aperio whole-slide images
+    ".ndpi": "plaintext",  # Hamamatsu WSI
+    ".tif": "plaintext",   # TIFF (microscopy)
+    ".tiff": "plaintext",
 }
 
 # Directories to always skip
@@ -234,7 +278,7 @@ class RepoManager:
             Dictionary with repo info
         """
         # Create temp directory
-        temp_dir = tempfile.mkdtemp(prefix="codeteacher_")
+        temp_dir = tempfile.mkdtemp(prefix="biocodeteacher_")
 
         try:
             # Modify URL for authentication if token provided

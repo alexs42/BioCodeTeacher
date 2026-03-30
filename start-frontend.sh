@@ -1,5 +1,5 @@
 #!/bin/bash
-# Start CodeTeacher Frontend - Single command setup & run
+# Start BioCodeTeacher Frontend - Single command setup & run
 
 set -e  # Exit on error
 
@@ -11,5 +11,5 @@ if [ ! -d "node_modules" ] || [ "package.json" -nt "node_modules/.package-lock.j
   npm install --silent
 fi
 
-echo "Starting CodeTeacher frontend on http://localhost:5173"
+echo "Starting BioCodeTeacher frontend on http://localhost:5173"
 npm run dev

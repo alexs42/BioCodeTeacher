@@ -1,5 +1,5 @@
 @echo off
-REM Start CodeTeacher Frontend
+REM Start BioCodeTeacher Frontend
 
 cd /d "%~dp0frontend"
 
@@ -10,5 +10,5 @@ if not exist "node_modules" (
 )
 
 REM Start the dev server
-echo Starting CodeTeacher frontend on http://localhost:5173
+echo Starting BioCodeTeacher frontend on http://localhost:5173
 npm run dev

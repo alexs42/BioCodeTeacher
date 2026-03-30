@@ -2,8 +2,8 @@
 Cross-platform disk persistence for repo-specific analysis data.
 
 Storage locations:
-  Windows: C:\\CodeTeacher\\
-  Linux/Mac: ~/.codeteacher/
+  Windows: C:\\BioCodeTeacher\\
+  Linux/Mac: ~/.biocodeteacher/
 
 Per-repo directory keyed by SHA-256 hash of the resolved repo path.
 """
@@ -22,8 +22,8 @@ from models.schemas import ArchitectureContextSummary
 def _default_base_dir() -> Path:
     """Platform-specific default storage directory."""
     if platform.system() == "Windows":
-        return Path("C:/CodeTeacher")
-    return Path.home() / ".codeteacher"
+        return Path("C:/BioCodeTeacher")
+    return Path.home() / ".biocodeteacher"
 
 
 def _path_hash(repo_path: str) -> str:
