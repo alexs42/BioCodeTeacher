@@ -1,6 +1,6 @@
 # BioCodeTeacher
 
-**v0.42** — An AI-powered educational tool that helps graduate students and postdocs understand bioinformatics code — not just *what* it does, but *why* it matters biologically. Provides deep, context-aware explanations for single-cell RNA-seq (Scanpy, Seurat), spatial transcriptomics (Squidpy, BANKSY), and digital pathology (OpenSlide, CLAM, PathML) codebases.
+**v0.43** — An AI-powered educational tool that helps graduate students and postdocs understand bioinformatics code — not just *what* it does, but *why* it matters biologically. Provides deep, context-aware explanations for single-cell RNA-seq (Scanpy, Seurat), spatial transcriptomics (Squidpy, BANKSY), and digital pathology (OpenSlide, CLAM, PathML) codebases.
 
 ![Python](https://img.shields.io/badge/Python-3.10--3.13-green) ![React](https://img.shields.io/badge/React-18+-61dafb) ![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178c6) ![Tests](https://img.shields.io/badge/Tests-141%20passing-brightgreen) ![License](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey)
 
@@ -158,7 +158,17 @@ Click breadcrumbs (`repo > file > line`) to navigate back up.
 
 ### Chat
 
-Expand the chat panel at the bottom. The chat assistant has deep knowledge of single-cell analysis, spatial transcriptomics, and digital pathology. Quick actions: "Analyze architecture", "Create diagram", "Explain with examples", "Find potential bugs", "Summarize file". Or ask domain-specific questions like "Why use Leiden over Louvain?" or "What resolution should I use for clustering?"
+The chat panel is open and ready at the bottom — no expand click needed. The chat assistant has deep knowledge of single-cell analysis, spatial transcriptomics, and digital pathology. Educational prompt suggestions get you started immediately:
+
+- **Teach me this repo** — architecture walkthrough with pros/cons
+- **Critique this code** — review with concrete improvement suggestions
+- **Tutorial mode** — step-by-step file walkthrough
+- **Analyze architecture** — trigger the 4-phase agentic analysis
+- **Explain with examples** — concrete usage examples
+- **Find potential bugs** — code review for issues
+- **Create diagram** — generate Mermaid diagrams
+
+Or ask domain-specific questions like "Why use Leiden over Louvain?" or "What resolution should I use for clustering?"
 
 ## Building
 

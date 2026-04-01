@@ -252,7 +252,7 @@ Use the **breadcrumb bar** (`repo > file > line`) at the top of the right panel 
 
 ## Step 10: Use the Chat
 
-The chat panel at the bottom-right lets you ask follow-up questions about the code you're viewing.
+The chat panel is open and ready at the bottom-right — no expand click needed. It lets you ask follow-up questions about the code you're viewing.
 
 **Examples of what you can ask:**
 - "What design pattern is this using?"
@@ -261,10 +261,14 @@ The chat panel at the bottom-right lets you ask follow-up questions about the co
 - "Can you show me a simpler way to write this?"
 - "What are the potential bugs here?"
 
-There are also **quick action buttons** for common tasks:
-- **Create diagram** — generates a visual diagram of the current file
+There are **educational prompt suggestions** to get you started:
+- **Teach me this repo** — architecture walkthrough with pros/cons
+- **Critique this code** — review with concrete improvement suggestions
+- **Tutorial mode** — step-by-step file walkthrough
+- **Analyze architecture** — trigger the 4-phase agentic analysis
+- **Explain with examples** — concrete usage examples for the current file
 - **Find potential bugs** — reviews the code for issues
-- **Summarize file** — gives a quick overview
+- **Create diagram** — generates a visual diagram of the current file
 
 ---
 
@@ -377,4 +381,4 @@ A: No. BioCodeTeacher uses OpenRouter as a unified gateway. OpenRouter supports 
 The interface has three main areas:
 - **Left:** File tree and code editor — browse files and click lines
 - **Top-right:** Context panel — shows repo overview, file summary, or line explanation depending on what you've selected (breadcrumb navigation at the top)
-- **Bottom-right:** Chat panel — ask follow-up questions about the code
+- **Bottom-right:** Chat panel (open by default) — ask follow-up questions about the code, with educational prompt suggestions

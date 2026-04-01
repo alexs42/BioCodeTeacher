@@ -4,7 +4,7 @@
  * Version scheme: increment 0.01 for small changes, 0.1 for big ones.
  */
 
-export const APP_VERSION = '0.42'
+export const APP_VERSION = '0.43'
 
 export interface ChangelogEntry {
   version: string
@@ -13,6 +13,15 @@ export interface ChangelogEntry {
 }
 
 export const CHANGELOG: ChangelogEntry[] = [
+  {
+    version: '0.43',
+    date: '2026-04-01',
+    changes: [
+      'Chat panel opens by default — no expand click required',
+      'New educational prompt suggestions: Teach me this repo, Critique this code, Tutorial mode',
+      'Build script: detect versioned Python binaries (python3.13, python3.12, etc.) on macOS/Linux',
+    ],
+  },
   {
     version: '0.42',
     date: '2026-03-31',

@@ -2,9 +2,9 @@
 
 ## Latest Update
 
-Date: 2026-03-28
-Features: Auto-analysis, persistent storage, three-tier context, visual redesign
-Previous: Build script robustness, file-specific context, folder browser, connections indicator
+Date: 2026-04-01
+Features: Chat open by default, educational prompt suggestions, build script versioned Python detection
+Previous: macOS build, splash screen, bug fixes, docs overhaul (v0.42)
 
 ## Test Results
 
@@ -116,4 +116,4 @@ Previous: Build script robustness, file-specific context, folder browser, connec
 
 ---
 
-**Last Updated:** 2026-03-28
+**Last Updated:** 2026-04-01

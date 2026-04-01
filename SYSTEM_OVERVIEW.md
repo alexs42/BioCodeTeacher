@@ -19,7 +19,7 @@ graph TB
 
         subgraph RightPanel["Right Panel - AI Explanations & Chat (Resizable Split)"]
             ExplainSection["📖 Lines 42-45 Explanation (range mode)<br/>━━━━━━━━━━━━━━━━━━━━<br/><br/>## Overview<br/>Defines async endpoint for explaining code<br/><br/>## Step-by-Step Breakdown<br/>1. Read file content from repo<br/>2. Check explanation cache<br/>3. Extract context around line<br/>4. Send to Claude via OpenRouter<br/><br/>## Key Concepts<br/>- Async/await pattern<br/>- Dependency injection<br/>- Caching strategy<br/><br/>▲ Drag sash to resize ▼"]
-            ChatSection["💬 Chat Interface (resizable)<br/>━━━━━━━━━━━━━━━━━━━━<br/>[Analyze architecture] [Create diagram]<br/>[Explain with examples] [Find bugs]<br/><br/>You: What does this function return?<br/><br/>🤖 Assistant: The explain_line function<br/>returns a JSON response containing<br/>the explanation text and a cached flag...<br/>━━━━━━━━━━━━━━━━━━━━<br/>[Analyze architecture] [Create diagram]...<br/>📝 Ask a question..."]
+            ChatSection["💬 Chat Interface (open by default, resizable)<br/>━━━━━━━━━━━━━━━━━━━━<br/>[Teach me this repo] [Critique this code]<br/>[Tutorial mode] [Analyze architecture]<br/>[Explain with examples] [Find bugs]<br/><br/>You: What does this function return?<br/><br/>🤖 Assistant: The explain_line function<br/>returns a JSON response containing<br/>the explanation text and a cached flag...<br/>━━━━━━━━━━━━━━━━━━━━<br/>📝 Ask a question..."]
         end
     end
 
@@ -165,7 +165,7 @@ graph TB
 stateDiagram-v2
     [*] --> Idle: User viewing code
 
-    Idle --> ChatOpen: Click chat header or resize sash
+    Idle --> ChatOpen: Chat open by default
 
     ChatOpen --> QuickAction: Click quick action button
     ChatOpen --> Typing: User types question
@@ -173,7 +173,7 @@ stateDiagram-v2
         "What does the caching<br/>mechanism do here?"
     end note
     note right of QuickAction
-        Quick actions:<br/>- Analyze architecture<br/>- Create diagram<br/>- Explain with examples<br/>- Find potential bugs<br/>- Summarize file
+        Prompt suggestions:<br/>- Teach me this repo<br/>- Critique this code<br/>- Tutorial mode<br/>- Analyze architecture<br/>- Explain with examples<br/>- Find potential bugs<br/>- Create diagram
     end note
 
     QuickAction --> Sending: Auto-send predefined prompt
@@ -260,7 +260,7 @@ This visualization shows BioCodeTeacher in operation with:
 4. **Multi-line range explanations** - Click and drag to explain code blocks
 5. **Real-time streaming** - See explanations appear progressively
 6. **Resizable chat panel** - Drag sash to expand chat up to ~2/3 of right panel
-7. **Quick action buttons** - One-click prompts for architecture, diagrams, examples, bugs, summaries
+7. **Educational prompt suggestions** - One-click prompts: Teach me this repo, Critique this code, Tutorial mode, architecture, diagrams, examples, bugs
 8. **Context-aware chat** - Ask follow-up questions with line/range context
 9. **Visual diagrams** - Mermaid charts for complex concepts
 10. **Architecture analysis** - High-level project understanding

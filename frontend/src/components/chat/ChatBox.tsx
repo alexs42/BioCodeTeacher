@@ -14,11 +14,13 @@ interface QuickAction {
 }
 
 const QUICK_ACTIONS: QuickAction[] = [
+  { label: 'Teach me this repo', message: 'Walk me through the architecture of this repo — what are its main components, what design decisions were made, and what are the pros and cons of this approach? Explain it like I\'m a graduate student seeing this codebase for the first time.', requiresFile: false },
+  { label: 'Critique this code', message: 'Critique this code: what works well, what could be improved, and what would you refactor? Suggest concrete alternatives with code examples.', requiresFile: true },
+  { label: 'Tutorial mode', message: 'Walk me through this file step by step like a tutorial. Explain each section in order, what it does, why it\'s written this way, and how the pieces connect. Assume I understand the language basics but not this specific domain.', requiresFile: true },
   { label: 'Analyze architecture', message: '', requiresFile: false, isArchitecture: true },
-  { label: 'Create diagram', message: 'Create a mermaid diagram showing the structure and relationships in this file.', requiresFile: true },
   { label: 'Explain with examples', message: 'Explain this code with concrete examples of how it works and when it would be called.', requiresFile: true },
   { label: 'Find potential bugs', message: 'Review this code for potential bugs, edge cases, or issues that could cause problems.', requiresFile: true },
-  { label: 'Summarize file', message: 'Provide a concise summary of what this file does, its key exports, and its role in the project.', requiresFile: true },
+  { label: 'Create diagram', message: 'Create a mermaid diagram showing the structure and relationships in this file.', requiresFile: true },
 ]
 
 export default function ChatBox() {
@@ -38,7 +40,7 @@ export default function ChatBox() {
 
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
   const [streamingResponse, setStreamingResponse] = useState('')
 
   const messagesEndRef = useRef<HTMLDivElement>(null)

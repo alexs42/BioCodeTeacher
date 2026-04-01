@@ -104,13 +104,18 @@ REM Get target Python major.minor version
 for /f "tokens=2 delims= " %%A in ('!PYTHON_CMD! --version 2^>^&1') do set "TARGET_VER=%%A"
 for /f "tokens=1,2 delims=." %%M in ("!TARGET_VER!") do set "TARGET_MM=%%M.%%N"
 
-REM If build_venv exists, check its Python matches the target version
-if exist "build_venv\Scripts\python.exe" (
-    for /f "tokens=2 delims= " %%A in ('build_venv\Scripts\python --version 2^>^&1') do set "VENV_VER=%%A"
-    for /f "tokens=1,2 delims=." %%M in ("!VENV_VER!") do set "VENV_MM=%%M.%%N"
-    if not "!VENV_MM!"=="!TARGET_MM!" (
-        echo       Existing build_venv uses Python !VENV_VER!, need !TARGET_MM! - recreating...
+REM If build_venv exists, check its Python is present and matches the target version
+if exist "build_venv" (
+    if not exist "build_venv\Scripts\python.exe" (
+        echo       build_venv is corrupted (missing python.exe^) - recreating...
         rd /s /q build_venv
+    ) else (
+        for /f "tokens=2 delims= " %%A in ('build_venv\Scripts\python --version 2^>^&1') do set "VENV_VER=%%A"
+        for /f "tokens=1,2 delims=." %%M in ("!VENV_VER!") do set "VENV_MM=%%M.%%N"
+        if not "!VENV_MM!"=="!TARGET_MM!" (
+            echo       Existing build_venv uses Python !VENV_VER!, need !TARGET_MM! - recreating...
+            rd /s /q build_venv
+        )
     )
 )
 

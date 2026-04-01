@@ -22,7 +22,7 @@ command -v npm >/dev/null 2>&1 || { echo "ERROR: npm not found in PATH"; exit 1;
 # Find a compatible Python (3.10-3.13).
 # Python 3.14+ lacks pre-built wheels for pydantic-core and other deps.
 PYTHON_CMD=""
-for cmd in python3 python; do
+for cmd in python3.13 python3.12 python3.11 python3.10 python3 python; do
     if command -v "$cmd" >/dev/null 2>&1; then
         PY_VER=$("$cmd" --version 2>&1 | awk '{print $2}')
         PY_MAJOR=$(echo "$PY_VER" | cut -d. -f1)
