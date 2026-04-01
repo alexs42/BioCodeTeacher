@@ -36,7 +36,6 @@ LANGUAGE_MAP = {
     ".kt": "kotlin",
     ".scala": "scala",
     ".r": "r",
-    ".R": "r",
     # -- Web / markup / config --
     ".html": "html",
     ".css": "css",

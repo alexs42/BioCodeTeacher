@@ -2,7 +2,7 @@
 Pydantic schemas for request/response validation.
 """
 
-from typing import Optional, List, Literal
+from typing import Any, Dict, Optional, List, Literal
 from pydantic import BaseModel, Field
 
 
@@ -79,6 +79,10 @@ class LineExplainRequest(BaseModel):
         default=None,
         description="Reasoning effort level for thinking models (e.g., 'medium', 'high')"
     )
+    provider_routing: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="OpenRouter provider routing config (e.g., {only: ['azure'], zdr: true})"
+    )
     repo_id: str
     file_path: str
     line_number: int = Field(..., ge=1)
@@ -96,6 +100,10 @@ class RangeExplainRequest(BaseModel):
         default=None,
         description="Reasoning effort level for thinking models (e.g., 'medium', 'high')"
     )
+    provider_routing: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="OpenRouter provider routing config"
+    )
     repo_id: str
     file_path: str
     start_line: int = Field(..., ge=1)
@@ -112,6 +120,10 @@ class ArchitectureRequest(BaseModel):
     reasoning_effort: Optional[str] = Field(
         default=None,
         description="Reasoning effort level for thinking models (e.g., 'medium', 'high')"
+    )
+    provider_routing: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="OpenRouter provider routing config"
     )
     repo_id: str
     max_files: int = Field(default=50, ge=1, le=200)
@@ -157,6 +169,10 @@ class ChatRequest(BaseModel):
         default=None,
         description="Reasoning effort level for thinking models (e.g., 'medium', 'high')"
     )
+    provider_routing: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="OpenRouter provider routing config"
+    )
     repo_id: str
     file_path: Optional[str] = None
     line_range: Optional[tuple[int, int]] = None
@@ -186,16 +202,19 @@ class ComponentInfo(BaseModel):
     path: str
     role: str
     dependencies: List[str] = Field(default_factory=list)
+    pipeline_stage: Optional[str] = None
 
 
 class ArchitectureContextSummary(BaseModel):
     """Stored architecture context for enriching explanations."""
     repo_id: str
-    overview: str
+    overview: str  # Populated from LLM's "data_flow" field
     components: List[ComponentInfo] = Field(default_factory=list)
     patterns: List[str] = Field(default_factory=list)
     context_block: str  # Condensed text for prompt injection
     timestamp: str
+    domain: str = ""  # e.g. single-cell, spatial, pathology
+    biological_decisions: List[str] = Field(default_factory=list)
 
 
 # ============ WebSocket Schemas ============

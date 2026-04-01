@@ -13,7 +13,7 @@ import {
   getFileSummary, getFileContext, FileContextResponse,
   createExplanationStream, getFileContent,
 } from '../../services/api'
-import { getModelById } from '../../config/models'
+import { getModelById, getApiModelId } from '../../config/models'
 import { useState } from 'react'
 
 export default function FileSummary() {
@@ -61,6 +61,7 @@ export default function FileSummary() {
     setFileSummary(null)
 
     const model = getModelById(selectedModel)
+    const apiModel = model ? getApiModelId(model) : selectedModel
     const ws = createExplanationStream(
       (msg) => {
         if (msg.type === 'chunk' && msg.content) {
@@ -80,8 +81,9 @@ export default function FileSummary() {
       ws.send(JSON.stringify({
         type: 'file_summary',
         api_key: apiKey,
-        model: selectedModel,
+        model: apiModel,
         reasoning_effort: model?.reasoning?.effort,
+        provider_routing: model?.providerRouting,
         repo_id: repoId,
         file_path: currentFile,
       }))

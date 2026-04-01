@@ -1,8 +1,10 @@
 # BioCodeTeacher
 
-An AI-powered educational tool that helps graduate students and postdocs understand bioinformatics code — not just *what* it does, but *why* it matters biologically. Provides deep, context-aware explanations for single-cell RNA-seq (Scanpy, Seurat), spatial transcriptomics (Squidpy, BANKSY), and digital pathology (OpenSlide, CLAM, PathML) codebases.
+**v0.42** — An AI-powered educational tool that helps graduate students and postdocs understand bioinformatics code — not just *what* it does, but *why* it matters biologically. Provides deep, context-aware explanations for single-cell RNA-seq (Scanpy, Seurat), spatial transcriptomics (Squidpy, BANKSY), and digital pathology (OpenSlide, CLAM, PathML) codebases.
 
 ![Python](https://img.shields.io/badge/Python-3.10--3.13-green) ![React](https://img.shields.io/badge/React-18+-61dafb) ![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178c6) ![Tests](https://img.shields.io/badge/Tests-141%20passing-brightgreen) ![License](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey)
+
+Freely distributed for non-commercial use under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). No warranty expressed or implied.
 
 ## Why BioCodeTeacher?
 
@@ -43,6 +45,7 @@ Breadcrumb navigation (`repo > file > line`) lets you move between tiers.
 
 ### Core Functionality
 
+- **Splash Screen**: Shows version, changelog, and license on launch. Press SPACE twice to dismiss.
 - **Auto-Analysis on Load**: Architecture analysis starts automatically when you open a repo
 - **Persistent Analysis Cache**: Analysis stored to `C:\BioCodeTeacher\` (Windows) or `~/.biocodeteacher/` (Linux/Mac). Survives server restarts.
 - **Multi-Line Range Explanation**: Click and drag to select multiple lines for combined explanations
@@ -53,10 +56,13 @@ Breadcrumb navigation (`repo > file > line`) lets you move between tiers.
 
 ### AI Models
 
-Choose from 4 pre-configured frontier models via [OpenRouter](https://openrouter.ai):
+Choose from 7 pre-configured frontier models via [OpenRouter](https://openrouter.ai):
 
 - **Claude Opus 4.6** (default) — Anthropic's strongest model, 1M context
+- **Claude Sonnet 4.6** — Fast and capable, 200K context
 - **GPT-5.4** — OpenAI with medium reasoning effort, 1M context
+- **GPT-5.4 Azure ZDR** — GPT-5.4 via Azure with zero data retention
+- **GLM-5 Turbo** — Open-source, competitive performance
 - **Gemini 3.1 Pro** — Google's flagship with thinking support, 1M context
 - **Gemini 3.0 Flash** — High-speed for quick explanations, 1M context
 
@@ -64,7 +70,7 @@ Add any OpenRouter-compatible model through Settings.
 
 ### Visual Design
 
-"Research Lab" aesthetic inspired by fluorescence microscopy — teal/cyan primary (GFP channel), indigo accent (DAPI channel), and amber warnings (PE channel) on deep dark backgrounds. Instrument Sans + Plus Jakarta Sans typography. Microscope icon wordmark with ambient glow effects.
+"Research Lab" aesthetic inspired by fluorescence microscopy — teal/cyan primary (GFP channel), indigo accent (DAPI channel), and amber warnings (PE channel) on deep dark backgrounds. Instrument Sans + Plus Jakarta Sans typography. Microscope icon wordmark with ambient glow effects. Supports dark and light modes.
 
 ## Architecture
 
@@ -72,37 +78,46 @@ Add any OpenRouter-compatible model through Settings.
 Frontend (React 18 / TypeScript / Vite)     Backend (FastAPI / Python 3.10-3.13)
 ├── App.tsx (root, Allotment split)          ├── main.py (entry, CORS, static)
 ├── components/                               ├── routers/
-│   ├── context/                             │   ├── repos.py   (load, browse)
-│   │   ├── ContextPanel.tsx (3-tier)        │   ├── files.py   (content, tree)
-│   │   ├── RepoOverview.tsx (tier 1)        │   ├── explain.py (explain, WS)
-│   │   ├── FileSummary.tsx  (tier 2)        │   └── chat.py    (chat stream)
-│   │   └── LineExplanation.tsx (tier 3)     ├── services/
-│   ├── architecture/PhaseTracker.tsx        │   ├── openrouter.py (AI + bio prompts)
-│   ├── chat/ChatBox.tsx                     │   ├── architecture_agent.py (4-phase)
-│   ├── code/CodeEditor.tsx                  │   ├── architecture_store.py (memory+disk)
-│   └── layout/Header.tsx                    │   ├── persistent_store.py (disk cache)
-├── hooks/useArchitectureAnalysis.ts         │   ├── repo_manager.py (Git/local)
-├── store/codeStore.ts (Zustand)             │   ├── code_parser.py (imports)
-├── services/api.ts (REST + WebSocket)       │   └── explanation_cache.py (LRU)
-└── styles/theme.css (Research Lab theme)    └── models/schemas.py (Pydantic)
+│   ├── splash/SplashScreen.tsx              │   ├── repos.py   (load, browse)
+│   ├── context/                             │   ├── files.py   (content, tree)
+│   │   ├── ContextPanel.tsx (3-tier)        │   ├── explain.py (explain, WS)
+│   │   ├── RepoOverview.tsx (tier 1)        │   └── chat.py    (chat stream)
+│   │   ├── FileSummary.tsx  (tier 2)        ├── services/
+│   │   └── LineExplanation.tsx (tier 3)     │   ├── openrouter.py (AI + bio prompts)
+│   ├── architecture/PhaseTracker.tsx        │   ├── architecture_agent.py (4-phase)
+│   ├── chat/ChatBox.tsx                     │   ├── architecture_store.py (memory+disk)
+│   ├── code/CodeEditor.tsx                  │   ├── persistent_store.py (disk cache)
+│   └── layout/Header.tsx                    │   ├── repo_manager.py (Git/local)
+├── hooks/useArchitectureAnalysis.ts         │   ├── code_parser.py (imports)
+├── store/codeStore.ts (Zustand)             │   └── explanation_cache.py (LRU)
+├── config/version.ts (version + changelog)  └── models/schemas.py (Pydantic)
+├── services/api.ts (REST + WebSocket)
+└── styles/theme.css (Research Lab theme)
 ```
 
 ## Quick Start
 
-### Option A: Standalone Executable (Windows, no setup)
+### Option A: Standalone Application (no setup)
 
-1. Download the latest `BioCodeTeacher.zip` from Releases
+**Windows:**
+1. Download the latest `BioCodeTeacher.zip` from [Releases](https://github.com/alexs42/BioCodeTeacher/releases)
 2. Extract and double-click `BioCodeTeacher.exe`
 3. Browser opens automatically — paste your [OpenRouter API key](https://openrouter.ai/keys) and go
 
-No Python or Node.js required.
+**macOS:**
+1. Download `BioCodeTeacher.dmg` from [Releases](https://github.com/alexs42/BioCodeTeacher/releases)
+2. Open the DMG and drag BioCodeTeacher to Applications
+3. Right-click > Open on first launch (unsigned app — bypasses Gatekeeper)
+4. Browser opens automatically — paste your [OpenRouter API key](https://openrouter.ai/keys) and go
+
+No Python or Node.js required on either platform.
 
 ### Option B: From Source (all platforms)
 
 **Prerequisites:** Python 3.10–3.13 (not 3.14+), Node.js 18+, [OpenRouter API Key](https://openrouter.ai/keys)
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/alexs42/BioCodeTeacher.git
 cd BioCodeTeacher
 ```
 
@@ -145,6 +160,28 @@ Click breadcrumbs (`repo > file > line`) to navigate back up.
 
 Expand the chat panel at the bottom. The chat assistant has deep knowledge of single-cell analysis, spatial transcriptomics, and digital pathology. Quick actions: "Analyze architecture", "Create diagram", "Explain with examples", "Find potential bugs", "Summarize file". Or ask domain-specific questions like "Why use Leiden over Louvain?" or "What resolution should I use for clustering?"
 
+## Building
+
+### macOS
+
+```bash
+./build.sh
+# Output: dist/BioCodeTeacher.app + dist/BioCodeTeacher.dmg
+```
+
+Builds frontend, creates Python venv, runs PyInstaller to produce a `.app` bundle, then wraps it in a `.dmg` with an Applications shortcut for drag-and-drop install. No code signing — first launch requires right-click > Open to bypass Gatekeeper.
+
+### Windows
+
+```cmd
+build.bat
+REM Output: dist\BioCodeTeacher\BioCodeTeacher.exe
+```
+
+Uses the `py` launcher to find Python 3.10–3.13, builds frontend, bundles with PyInstaller. Includes retry loops for Dropbox file locks.
+
+Both platforms use `biocodeteacher.spec` — a cross-platform PyInstaller spec with `platform.system()` detection. UPX compression is disabled on macOS (breaks Gatekeeper).
+
 ## API Endpoints
 
 | Endpoint | Method | Purpose |
@@ -171,7 +208,7 @@ Analysis is cached to disk so it survives server restarts:
 - **Windows:** `C:\BioCodeTeacher\repos\<hash>\`
 - **Linux/Mac:** `~/.biocodeteacher/repos/<hash>/`
 
-Each repo directory contains `architecture.json`, `architecture_display.md`, `meta.json`, and `file_summaries/`. File summaries are invalidated when the file content changes (tracked by MD5 hash).
+Each repo directory contains `architecture.json`, `architecture_display.md`, `meta.json`, and `file_summaries/`. File summaries are invalidated when the file content changes.
 
 ## Development
 
@@ -193,7 +230,7 @@ cd backend && pytest -q
 | test_chat_router.py | 9 | Chat endpoints |
 | test_persistent_store.py | 16 | Disk persistence, path hashing |
 
-**Frontend (21 unit tests):**
+**Frontend (31 unit tests):**
 ```bash
 cd frontend && npx vitest run
 ```
@@ -208,13 +245,13 @@ npx playwright test
 cd frontend && npx tsc --noEmit
 ```
 
-### Building Standalone Executable
+## Versioning
 
-```cmd
-build.bat
-```
+Version is tracked in `frontend/src/config/version.ts`. The splash screen displays the current version on every launch.
 
-Builds frontend, bundles backend + frontend into PyInstaller `--onedir` package. Output: `dist/BioCodeTeacher/BioCodeTeacher.exe`. The build script auto-detects Python 3.10–3.13 via the `py` launcher and handles Dropbox file locks with retries.
+- Increment **0.01** for small changes (bug fixes, minor UI tweaks)
+- Increment **0.1** for big changes (new features, major refactors)
+- Update `APP_VERSION` and `CHANGELOG` before each build
 
 ## Troubleshooting
 
@@ -224,21 +261,11 @@ Builds frontend, bundles backend + frontend into PyInstaller `--onedir` package.
 | Backend connection error | Check port 8000 is free, backend is running |
 | Python 3.14+ build failure | Install Python 3.12 or 3.13 alongside 3.14 |
 | Dropbox locks `dist/` during build | Pause Dropbox sync or move project outside Dropbox |
+| macOS "app is damaged" | Right-click > Open to bypass Gatekeeper |
 | Slow explanations | Switch to Gemini 3.0 Flash for speed |
 | "Model not found" | Verify model ID at [OpenRouter Models](https://openrouter.ai/models) |
 
 ## Configuration
-
-### Environment Variables (optional)
-
-Create `backend/.env`:
-```env
-HOST=0.0.0.0
-PORT=8000
-CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-CACHE_MAX_SIZE=1000
-CACHE_TTL_MINUTES=60
-```
 
 ### Model Configuration
 
@@ -249,7 +276,7 @@ Edit `frontend/src/config/models.ts` to add pre-configured models. For reasoning
 - **API keys**: Browser localStorage only (never sent to our servers)
 - **Model preferences**: Browser localStorage
 - **Architecture analysis**: Disk cache (`C:\BioCodeTeacher\` or `~/.biocodeteacher/`)
-- **File summaries**: Disk cache (per-repo, invalidated by content hash)
+- **File summaries**: Disk cache (per-repo, invalidated by file path hash)
 - **Explanation cache**: In-memory (cleared on restart)
 - **Chat history**: Session only (cleared on refresh)
 
@@ -269,7 +296,7 @@ BioCodeTeacher is a specialized fork of [CodeTeacher](https://github.com/alexs42
 
 This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)**.
 
-You are free to use, share, and adapt this software for non-commercial purposes. See the [LICENSE](LICENSE) file for details.
+You are free to use, share, and adapt this software for non-commercial purposes. No warranty expressed or implied. See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 

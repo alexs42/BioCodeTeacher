@@ -2,6 +2,8 @@
  * API service for communicating with the BioCodeTeacher backend.
  */
 
+import type { ProviderRouting } from '../config/models'
+
 const API_BASE = '/api'
 const WS_PROTOCOL = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
 const WS_BASE = `${WS_PROTOCOL}//${window.location.host}/api`
@@ -189,6 +191,7 @@ export interface LineExplainRequest {
   api_key: string
   model: string
   reasoning_effort?: string
+  provider_routing?: ProviderRouting
   repo_id: string
   file_path: string
   line_number: number
@@ -200,6 +203,7 @@ export interface RangeExplainRequest {
   api_key: string
   model: string
   reasoning_effort?: string
+  provider_routing?: ProviderRouting
   repo_id: string
   file_path: string
   start_line: number
@@ -211,6 +215,7 @@ export interface ArchitectureRequest {
   api_key: string
   model: string
   reasoning_effort?: string
+  provider_routing?: ProviderRouting
   repo_id: string
 }
 
@@ -219,6 +224,7 @@ export interface ArchitectureAgentRequest {
   api_key: string
   model: string
   reasoning_effort?: string
+  provider_routing?: ProviderRouting
   repo_id: string
   max_files_to_analyze?: number
 }
@@ -250,6 +256,7 @@ export interface ChatStreamRequest {
   api_key: string
   model: string
   reasoning_effort?: string
+  provider_routing?: ProviderRouting
   repo_id: string
   file_path?: string
   line_range?: [number, number]
@@ -282,6 +289,7 @@ export interface FileSummaryRequest {
   api_key: string
   model: string
   reasoning_effort?: string
+  provider_routing?: ProviderRouting
   repo_id: string
   file_path: string
 }

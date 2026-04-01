@@ -7,8 +7,19 @@ export interface ReasoningConfig {
   effort: "none" | "minimal" | "low" | "medium" | "high" | "xhigh"
 }
 
+export interface ProviderRouting {
+  only?: string[]
+  ignore?: string[]
+  order?: string[]
+  zdr?: boolean
+  allow_fallbacks?: boolean
+  data_collection?: "allow" | "deny"
+}
+
 export interface ModelOption {
   id: string
+  /** Override model ID sent to OpenRouter (when id is a virtual/internal key) */
+  apiModelId?: string
   name: string
   provider: string
   description: string
@@ -16,6 +27,12 @@ export interface ModelOption {
   recommended?: boolean
   isCustom?: boolean
   reasoning?: ReasoningConfig
+  providerRouting?: ProviderRouting
+}
+
+/** Get the model ID to send to OpenRouter (apiModelId if set, otherwise id). */
+export function getApiModelId(model: ModelOption): string {
+  return model.apiModelId || model.id
 }
 
 /**
@@ -32,12 +49,36 @@ export const DEFAULT_MODELS: ModelOption[] = [
     recommended: true
   },
   {
+    id: "anthropic/claude-sonnet-4.6",
+    name: "Claude Sonnet 4.6",
+    provider: "Anthropic",
+    description: "Fast, intelligent model balancing speed and capability, 200K context",
+    contextWindow: 200000
+  },
+  {
     id: "openai/gpt-5.4",
     name: "GPT-5.4 (Thinking Medium)",
     provider: "OpenAI",
     description: "OpenAI's latest frontier model with multimodal reasoning, 1M context",
     contextWindow: 1050000,
     reasoning: { effort: "medium" }
+  },
+  {
+    id: "openai/gpt-5.4--azure-zdr",
+    apiModelId: "openai/gpt-5.4",
+    name: "GPT-5.4 Azure ZDR",
+    provider: "OpenAI (Azure)",
+    description: "GPT-5.4 routed through Azure with zero data retention — your prompts are never stored or trained on",
+    contextWindow: 1050000,
+    reasoning: { effort: "medium" },
+    providerRouting: { only: ["azure"], zdr: true, allow_fallbacks: false }
+  },
+  {
+    id: "z-ai/glm-5-turbo",
+    name: "GLM-5 Turbo",
+    provider: "Z.ai (Zhipu)",
+    description: "Zhipu's fast frontier model with strong multilingual and reasoning capabilities",
+    contextWindow: 128000
   },
   {
     id: "google/gemini-3.1-pro-preview",

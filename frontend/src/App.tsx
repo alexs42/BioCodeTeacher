@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Allotment } from 'allotment'
 import 'allotment/dist/style.css'
 import { useCodeStore } from './store/codeStore'
@@ -7,10 +7,13 @@ import CodePanel from './components/code/CodePanel'
 import ContextPanel from './components/context/ContextPanel'
 import SetupModal from './components/setup/SetupModal'
 import SettingsModal from './components/settings/SettingsModal'
+import SplashScreen from './components/splash/SplashScreen'
+import './components/splash/SplashScreen.css'
 import './styles/theme.css'
 
 function App() {
   const { isDarkMode, apiKey, showSetupModal, showSettingsModal, setShowSetupModal, setShowSettingsModal } = useCodeStore()
+  const [showSplash, setShowSplash] = useState(true)
 
   // Apply dark/light mode class to document
   useEffect(() => {
@@ -39,6 +42,7 @@ function App() {
         </Allotment>
       </div>
 
+      {showSplash && <SplashScreen onDismiss={() => setShowSplash(false)} />}
       {showSetupModal && <SetupModal />}
       <SettingsModal isOpen={showSettingsModal} onClose={() => setShowSettingsModal(false)} />
     </div>

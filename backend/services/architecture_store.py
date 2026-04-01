@@ -125,10 +125,13 @@ class ArchitectureStore:
         if repo_path:
             try:
                 analysis_time = datetime.fromisoformat(summary.timestamp)
+                # Ensure UTC-aware for consistent comparison
+                if analysis_time.tzinfo is None:
+                    analysis_time = analysis_time.replace(tzinfo=timezone.utc)
                 for comp in summary.components:
                     file_path = Path(repo_path) / comp.path
                     if file_path.exists():
-                        mtime = datetime.fromtimestamp(file_path.stat().st_mtime)
+                        mtime = datetime.fromtimestamp(file_path.stat().st_mtime, tz=timezone.utc)
                         if mtime > analysis_time:
                             result["is_stale"] = True
                             break

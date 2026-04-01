@@ -1,4 +1,4 @@
-# CodeTeacher - Test & Implementation Summary
+# BioCodeTeacher - Test & Implementation Summary
 
 ## Latest Update
 
@@ -48,7 +48,7 @@ Previous: Build script robustness, file-specific context, folder browser, connec
 - [x] `useArchitectureAnalysis` hook extracts shared WS logic from ArchitecturePanel
 
 ### Persistent Storage (2026-03-28)
-- [x] `persistent_store.py` with cross-platform storage (C:\CodeTeacher\ or ~/.codeteacher/)
+- [x] `persistent_store.py` with cross-platform storage (C:\BioCodeTeacher\ or ~/.codeteacher/)
 - [x] Per-repo directories keyed by SHA-256 hash of resolved path
 - [x] Architecture analysis persisted: architecture.json + architecture_display.md
 - [x] File summaries persisted: file_summaries/<hash>.json with content_hash for staleness

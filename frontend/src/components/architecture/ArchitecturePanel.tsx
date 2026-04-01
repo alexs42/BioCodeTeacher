@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm'
 import { RefreshCw, Brain, AlertTriangle } from 'lucide-react'
 import { useCodeStore } from '../../store/codeStore'
 import { createExplanationStream, AgentStreamMessage, getFileContent } from '../../services/api'
-import { getModelById } from '../../config/models'
+import { getModelById, getApiModelId } from '../../config/models'
 import { PhaseTracker } from './PhaseTracker'
 import mermaid from 'mermaid'
 
@@ -27,10 +27,10 @@ function MermaidDiagram({ chart }: { chart: string }) {
       mermaid.render(id, chart).then(({ svg }) => {
         if (ref.current) ref.current.innerHTML = svg
       }).catch(() => {
-        if (ref.current) ref.current.innerHTML = `<pre class="text-xs text-gray-400">${chart}</pre>`
+        if (ref.current) ref.current.textContent = chart
       })
     } catch {
-      if (ref.current) ref.current.innerHTML = `<pre class="text-xs text-gray-400">${chart}</pre>`
+      if (ref.current) ref.current.textContent = chart
     }
   }, [chart])
 
@@ -84,6 +84,7 @@ export function ArchitecturePanel() {
     setActiveView('architecture')
 
     const model = getModelById(selectedModel)
+    const apiModel = model ? getApiModelId(model) : selectedModel
     const reasoning = model?.reasoning?.effort
 
     const ws = createExplanationStream(
@@ -120,8 +121,9 @@ export function ArchitecturePanel() {
       ws.send(JSON.stringify({
         type: 'architecture_agent',
         api_key: apiKey,
-        model: selectedModel,
+        model: apiModel,
         reasoning_effort: reasoning,
+        provider_routing: model?.providerRouting,
         repo_id: repoId,
       }))
     }
@@ -159,10 +161,10 @@ export function ArchitecturePanel() {
   if (!architectureAnalysis && !isAnalyzingArchitecture) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4 p-6 text-center">
-        <Brain size={48} className="text-gray-500" />
+        <Brain size={48} className="text-ct-text-secondary" />
         <div>
-          <h3 className="text-lg font-medium text-gray-200 mb-1">Architecture Analysis</h3>
-          <p className="text-sm text-gray-400 max-w-md">
+          <h3 className="text-lg font-medium text-ct-text mb-1">Architecture Analysis</h3>
+          <p className="text-sm text-ct-text-secondary max-w-md">
             Agentically examines your repository to understand its architecture,
             component relationships, and design patterns.
           </p>
@@ -170,7 +172,7 @@ export function ArchitecturePanel() {
         <button
           onClick={startAnalysis}
           disabled={!apiKey || !repoId}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500
+          className="px-4 py-2 bg-ct-primary hover:bg-ct-primary/90 disabled:bg-ct-surface disabled:text-ct-text-secondary
                      rounded-lg text-sm font-medium transition-colors"
         >
           Analyze Architecture
@@ -183,7 +185,7 @@ export function ArchitecturePanel() {
     <div className="flex flex-col h-full overflow-hidden">
       {/* Phase tracker */}
       {isAnalyzingArchitecture && (
-        <div className="border-b border-gray-700 bg-gray-800/50">
+        <div className="border-b border-ct-border bg-ct-surface/50">
           <PhaseTracker
             phases={PHASES.map(p => ({
               ...p,
@@ -193,10 +195,10 @@ export function ArchitecturePanel() {
             completedPhases={completedPhases}
           />
           {architecturePhaseDetail && (
-            <div className="px-3 pb-2 text-xs text-gray-400">{architecturePhaseDetail}</div>
+            <div className="px-3 pb-2 text-xs text-ct-text-secondary">{architecturePhaseDetail}</div>
           )}
           {selectedFiles.length > 0 && architecturePhase !== 'synthesis' && (
-            <div className="px-3 pb-2 text-xs text-gray-500">
+            <div className="px-3 pb-2 text-xs text-ct-text-secondary">
               Files: {selectedFiles.slice(0, 5).join(', ')}
               {selectedFiles.length > 5 && ` +${selectedFiles.length - 5} more`}
             </div>
@@ -223,7 +225,7 @@ export function ArchitecturePanel() {
                 if (!className && FILE_PATH_RE.test(text)) {
                   return (
                     <code
-                      className="bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono text-blue-400 cursor-pointer hover:underline"
+                      className="bg-ct-surface px-1.5 py-0.5 rounded text-sm font-mono text-ct-primary cursor-pointer hover:underline"
                       onClick={() => navigateToFile(text)}
                       title={`Open ${text}`}
                     >
@@ -235,7 +237,7 @@ export function ArchitecturePanel() {
                 // Code block
                 if (className) {
                   return (
-                    <pre className="bg-gray-900 rounded-lg p-3 overflow-x-auto my-2">
+                    <pre className="bg-ct-bg rounded-lg p-3 overflow-x-auto my-2">
                       <code className={className}>{children}</code>
                     </pre>
                   )
@@ -243,7 +245,7 @@ export function ArchitecturePanel() {
 
                 // Regular inline code
                 return (
-                  <code className="bg-gray-800 px-1.5 py-0.5 rounded text-sm font-mono">
+                  <code className="bg-ct-surface px-1.5 py-0.5 rounded text-sm font-mono">
                     {children}
                   </code>
                 )
@@ -254,7 +256,7 @@ export function ArchitecturePanel() {
           </ReactMarkdown>
         ) : (
           <div className="flex items-center justify-center h-full">
-            <div className="text-center text-gray-400">
+            <div className="text-center text-ct-text-secondary">
               <div className="animate-pulse">Analyzing repository...</div>
             </div>
           </div>
@@ -262,16 +264,16 @@ export function ArchitecturePanel() {
 
         {/* Streaming cursor */}
         {isAnalyzingArchitecture && architectureAnalysis && (
-          <span className="inline-block w-2 h-4 bg-blue-400 animate-pulse ml-0.5" />
+          <span className="inline-block w-2 h-4 bg-ct-primary animate-pulse ml-0.5" />
         )}
       </div>
 
       {/* Footer with context badge, staleness, and re-analyze */}
       {!isAnalyzingArchitecture && architectureAnalysis && (
-        <div className="flex items-center justify-between px-3 py-2 border-t border-gray-700 text-xs">
+        <div className="flex items-center justify-between px-3 py-2 border-t border-ct-border text-xs">
           <div className="flex items-center gap-3">
             {hasArchitectureContext && (
-              <span className="text-green-400 flex items-center gap-1">
+              <span className="text-ct-accent flex items-center gap-1">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -281,7 +283,7 @@ export function ArchitecturePanel() {
               </span>
             )}
             {isStale && (
-              <span className="text-yellow-400 flex items-center gap-1">
+              <span className="text-ct-warm flex items-center gap-1">
                 <AlertTriangle size={12} />
                 Files changed — re-analyze recommended
               </span>
@@ -289,7 +291,7 @@ export function ArchitecturePanel() {
           </div>
           <button
             onClick={() => { startAnalysis(); setIsStale(false) }}
-            className="flex items-center gap-1 text-gray-400 hover:text-gray-200 transition-colors ml-auto"
+            className="flex items-center gap-1 text-ct-text-secondary hover:text-ct-text transition-colors ml-auto"
           >
             <RefreshCw size={12} /> Re-analyze
           </button>

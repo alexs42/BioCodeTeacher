@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useCodeStore, ChatMessage } from '../../store/codeStore'
 import { createChatStream, ChatStreamRequest } from '../../services/api'
-import { getModelById } from '../../config/models'
+import { getModelById, getApiModelId } from '../../config/models'
 
 interface QuickAction {
   label: string
@@ -114,6 +114,7 @@ export default function ChatBox() {
 
     ws.onopen = () => {
       const modelConfig = getModelById(selectedModel)
+      const apiModel = modelConfig ? getApiModelId(modelConfig) : selectedModel
 
       // Use selectedRange for line_range if available, otherwise fall back to +-5 around selectedLine
       let lineRange: [number, number] | undefined
@@ -125,8 +126,9 @@ export default function ChatBox() {
 
       const request: ChatStreamRequest = {
         api_key: apiKey,
-        model: selectedModel,
+        model: apiModel,
         reasoning_effort: modelConfig?.reasoning?.effort,
+        provider_routing: modelConfig?.providerRouting,
         repo_id: repoId,
         file_path: currentFile || undefined,
         line_range: lineRange,

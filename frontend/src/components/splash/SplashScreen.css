@@ -1,0 +1,339 @@
+/* ============================================================
+   SplashScreen — Fluorescence microscopy aesthetic
+   Particles drift like fluorescent markers in a dark field.
+   DNA helix decorates the edge. Everything glows.
+   ============================================================ */
+
+.splash-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 50% 40%, #0c1118 0%, #060a10 70%, #020408 100%);
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* ---- Floating particles (fluorescent markers) ---- */
+
+.splash-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.splash-particle {
+  position: absolute;
+  width: var(--particle-size, 3px);
+  height: var(--particle-size, 3px);
+  border-radius: 50%;
+  background: var(--particle-color, rgba(45, 212, 191, 0.3));
+  box-shadow: 0 0 8px var(--particle-color, rgba(45, 212, 191, 0.2));
+  animation: splash-float linear infinite;
+  opacity: 0;
+}
+
+@keyframes splash-float {
+  0% { transform: translateY(0) scale(0); opacity: 0; }
+  10% { opacity: 1; transform: scale(1); }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(-120px) scale(0.5); opacity: 0; }
+}
+
+/* ---- DNA Helix (side decoration) ---- */
+
+.splash-helix {
+  position: absolute;
+  right: clamp(2rem, 6vw, 8rem);
+  top: 50%;
+  transform: translateY(-50%);
+  height: clamp(300px, 60vh, 600px);
+  width: auto;
+  opacity: 0.5;
+  animation: splash-helix-drift 20s ease-in-out infinite;
+}
+
+.splash-helix-strand {
+  animation: splash-helix-pulse 4s ease-in-out infinite;
+}
+
+@keyframes splash-helix-drift {
+  0%, 100% { transform: translateY(-50%) translateX(0); }
+  50% { transform: translateY(-50%) translateX(8px); }
+}
+
+@keyframes splash-helix-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* ---- Main content ---- */
+
+.splash-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: clamp(400px, 70vw, 780px);
+  padding: clamp(1.5rem, 4vh, 3rem) clamp(1rem, 4vw, 2rem);
+  animation: splash-enter 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+@keyframes splash-enter {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- Microscope icon ---- */
+
+.splash-icon {
+  width: clamp(56px, 8vw, 96px);
+  height: clamp(56px, 8vw, 96px);
+  margin-bottom: clamp(0.75rem, 2vh, 1.5rem);
+  animation: splash-icon-glow 3s ease-in-out infinite;
+}
+
+.splash-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 12px rgba(45, 212, 191, 0.3));
+}
+
+@keyframes splash-icon-glow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(45, 212, 191, 0.2)); }
+  50% { filter: drop-shadow(0 0 20px rgba(45, 212, 191, 0.4)); }
+}
+
+/* ---- Title ---- */
+
+.splash-title {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 clamp(0.3rem, 0.8vh, 0.6rem);
+  text-align: center;
+}
+
+.splash-title-bio {
+  color: #2dd4bf;
+  text-shadow: 0 0 30px rgba(45, 212, 191, 0.4), 0 0 60px rgba(45, 212, 191, 0.15);
+}
+
+.splash-title-sep {
+  color: #243040;
+  margin: 0 0.05em;
+  font-weight: 400;
+}
+
+.splash-title-code {
+  color: #e2e8f0;
+}
+
+/* ---- Version badge ---- */
+
+.splash-version {
+  margin-bottom: clamp(1rem, 2.5vh, 2rem);
+}
+
+.splash-version-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(0.85rem, 1.6vw, 1.3rem);
+  font-weight: 500;
+  color: #818cf8;
+  background: rgba(129, 140, 248, 0.08);
+  border: 1px solid rgba(129, 140, 248, 0.2);
+  border-radius: 999px;
+  padding: 0.2em 0.9em;
+  letter-spacing: 0.04em;
+}
+
+/* ---- Description ---- */
+
+.splash-description {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(1rem, 2.2vw, 1.55rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: #8494a7;
+  text-align: center;
+  margin: 0 0 clamp(1rem, 2vh, 1.5rem);
+  max-width: 620px;
+}
+
+/* ---- Changelog ---- */
+
+.splash-changelog-toggle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(0.8rem, 1.4vw, 1rem);
+  color: #2dd4bf;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3em 0;
+  margin-bottom: 0.5rem;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(45, 212, 191, 0.3);
+  transition: border-color 0.2s;
+}
+
+.splash-changelog-toggle:hover {
+  border-bottom-color: #2dd4bf;
+}
+
+.splash-changelog {
+  background: rgba(45, 212, 191, 0.04);
+  border: 1px solid rgba(45, 212, 191, 0.1);
+  border-radius: 8px;
+  padding: clamp(0.6rem, 1.5vh, 1rem) clamp(0.8rem, 2vw, 1.4rem);
+  margin-bottom: clamp(0.8rem, 1.5vh, 1.2rem);
+  max-height: 200px;
+  overflow-y: auto;
+  animation: splash-changelog-in 0.3s ease-out;
+  width: 100%;
+}
+
+@keyframes splash-changelog-in {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 200px; }
+}
+
+.splash-changelog ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.splash-changelog li {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+  color: #8494a7;
+  padding: 0.25em 0;
+  padding-left: 1.2em;
+  position: relative;
+  line-height: 1.4;
+}
+
+.splash-changelog li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #2dd4bf;
+  opacity: 0.5;
+}
+
+/* ---- License ---- */
+
+.splash-license {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(0.65rem, 1.1vw, 0.82rem);
+  color: #3d5266;
+  text-align: center;
+  margin: 0 0 clamp(1.5rem, 3vh, 2.5rem);
+  line-height: 1.5;
+}
+
+.splash-license a {
+  color: #818cf8;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(129, 140, 248, 0.3);
+  transition: border-color 0.2s;
+}
+
+.splash-license a:hover {
+  border-bottom-color: #818cf8;
+}
+
+/* ---- Skip hint ---- */
+
+.splash-skip {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 0.8rem;
+}
+
+.splash-skip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(45, 212, 191, 0.3);
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.splash-skip-dot.active {
+  background: #2dd4bf;
+  border-color: #2dd4bf;
+  box-shadow: 0 0 8px rgba(45, 212, 191, 0.5);
+}
+
+.splash-skip-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+  color: #3d5266;
+}
+
+.splash-skip-text kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #243040;
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  color: #8494a7;
+}
+
+/* ---- Skip button ---- */
+
+.splash-skip-btn {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(0.75rem, 1.3vw, 0.9rem);
+  font-weight: 500;
+  color: #8494a7;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #243040;
+  border-radius: 6px;
+  padding: 0.4em 1.6em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.splash-skip-btn:hover {
+  color: #e2e8f0;
+  border-color: #2dd4bf;
+  background: rgba(45, 212, 191, 0.06);
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.1);
+}
+
+/* ---- Responsive: hide helix on narrow screens ---- */
+
+@media (max-width: 768px) {
+  .splash-helix {
+    display: none;
+  }
+}
+
+/* ---- Scrollbar for changelog ---- */
+
+.splash-changelog::-webkit-scrollbar {
+  width: 4px;
+}
+
+.splash-changelog::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.splash-changelog::-webkit-scrollbar-thumb {
+  background: rgba(45, 212, 191, 0.2);
+  border-radius: 2px;
+}

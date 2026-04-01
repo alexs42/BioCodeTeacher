@@ -1,16 +1,33 @@
 # -*- mode: python ; coding: utf-8 -*-
 """
 PyInstaller spec for BioCodeTeacher single-directory bundle.
-Run: pyinstaller codeteacher.spec --noconfirm
+
+Cross-platform:
+  Windows: pyinstaller biocodeteacher.spec --noconfirm
+  macOS:   pyinstaller biocodeteacher.spec --noconfirm
 """
 
 import os
+import platform
 from PyInstaller.utils.hooks import collect_all
 
 block_cipher = None
 
+IS_MACOS = platform.system() == 'Darwin'
+IS_WINDOWS = platform.system() == 'Windows'
+
 backend_dir = os.path.join('.', 'backend')
 frontend_dist = os.path.join('.', 'frontend', 'dist')
+
+# Icon file (platform-specific format, None if not present)
+_icns_path = os.path.join('.', 'assets', 'icon.icns')
+_ico_path = os.path.join('.', 'assets', 'icon.ico')
+if IS_MACOS and os.path.exists(_icns_path):
+    app_icon = _icns_path
+elif IS_WINDOWS and os.path.exists(_ico_path):
+    app_icon = _ico_path
+else:
+    app_icon = None
 
 # Collect entire packages that PyInstaller's static analysis may miss
 uvicorn_datas, uvicorn_binaries, uvicorn_hiddenimports = collect_all('uvicorn')
@@ -121,9 +138,9 @@ exe = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
-    console=True,
-    icon=None,
+    upx=not IS_MACOS,       # UPX breaks macOS Gatekeeper checks
+    console=not IS_MACOS,   # macOS .app should be windowed (opens browser)
+    icon=app_icon,
 )
 
 coll = COLLECT(
@@ -132,7 +149,23 @@ coll = COLLECT(
     a.zipfiles,
     a.datas,
     strip=False,
-    upx=True,
+    upx=not IS_MACOS,
     upx_exclude=[],
     name='BioCodeTeacher',
 )
+
+# macOS: wrap into a .app bundle
+if IS_MACOS:
+    app = BUNDLE(
+        coll,
+        name='BioCodeTeacher.app',
+        icon=app_icon,
+        bundle_identifier='com.biocodeteacher.app',
+        info_plist={
+            'CFBundleDisplayName': 'BioCodeTeacher',
+            'CFBundleShortVersionString': '1.0.0',
+            'CFBundleVersion': '1.0.0',
+            'NSHighResolutionCapable': True,
+            'LSBackgroundOnly': False,
+        },
+    )

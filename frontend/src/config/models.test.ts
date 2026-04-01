@@ -3,14 +3,16 @@ import {
   DEFAULT_MODELS,
   getModelById,
   getDefaultModel,
+  getApiModelId,
   validateCustomModel,
   ModelOption,
   ReasoningConfig,
+  ProviderRouting,
 } from './models'
 
 describe('DEFAULT_MODELS', () => {
-  it('should have exactly 4 frontier models', () => {
-    expect(DEFAULT_MODELS).toHaveLength(4)
+  it('should have exactly 7 models', () => {
+    expect(DEFAULT_MODELS).toHaveLength(7)
   })
 
   it('should have Claude Opus 4.6 as the first and recommended model', () => {
@@ -22,12 +24,34 @@ describe('DEFAULT_MODELS', () => {
     expect(opus.contextWindow).toBe(1000000)
   })
 
+  it('should have Claude Sonnet 4.6', () => {
+    const sonnet = DEFAULT_MODELS.find(m => m.id === 'anthropic/claude-sonnet-4.6')
+    expect(sonnet).toBeDefined()
+    expect(sonnet!.provider).toBe('Anthropic')
+    expect(sonnet!.contextWindow).toBe(200000)
+  })
+
   it('should have GPT-5.4 with reasoning effort medium', () => {
     const gpt54 = DEFAULT_MODELS.find(m => m.id === 'openai/gpt-5.4')
     expect(gpt54).toBeDefined()
     expect(gpt54!.reasoning).toEqual({ effort: 'medium' })
     expect(gpt54!.contextWindow).toBe(1050000)
     expect(gpt54!.provider).toBe('OpenAI')
+  })
+
+  it('should have GPT-5.4 Azure ZDR with provider routing', () => {
+    const azureGpt = DEFAULT_MODELS.find(m => m.id === 'openai/gpt-5.4--azure-zdr')
+    expect(azureGpt).toBeDefined()
+    expect(azureGpt!.apiModelId).toBe('openai/gpt-5.4')
+    expect(azureGpt!.provider).toBe('OpenAI (Azure)')
+    expect(azureGpt!.providerRouting).toEqual({ only: ['azure'], zdr: true, allow_fallbacks: false })
+  })
+
+  it('should have GLM-5 Turbo', () => {
+    const glm = DEFAULT_MODELS.find(m => m.id === 'z-ai/glm-5-turbo')
+    expect(glm).toBeDefined()
+    expect(glm!.provider).toBe('Z.ai (Zhipu)')
+    expect(glm!.contextWindow).toBe(128000)
   })
 
   it('should have Gemini 3.1 Pro with reasoning effort medium', () => {
@@ -163,6 +187,37 @@ describe('validateCustomModel', () => {
   })
 })
 
+describe('getApiModelId', () => {
+  it('should return id when no apiModelId is set', () => {
+    const model: ModelOption = {
+      id: 'anthropic/claude-opus-4.6',
+      name: 'Test',
+      provider: 'Test',
+      description: 'test',
+      contextWindow: 100000,
+    }
+    expect(getApiModelId(model)).toBe('anthropic/claude-opus-4.6')
+  })
+
+  it('should return apiModelId when set', () => {
+    const model: ModelOption = {
+      id: 'openai/gpt-5.4--azure-zdr',
+      apiModelId: 'openai/gpt-5.4',
+      name: 'Test',
+      provider: 'Test',
+      description: 'test',
+      contextWindow: 100000,
+    }
+    expect(getApiModelId(model)).toBe('openai/gpt-5.4')
+  })
+
+  it('should return correct API model ID for Azure ZDR model', () => {
+    const azureModel = DEFAULT_MODELS.find(m => m.id === 'openai/gpt-5.4--azure-zdr')
+    expect(azureModel).toBeDefined()
+    expect(getApiModelId(azureModel!)).toBe('openai/gpt-5.4')
+  })
+})
+
 describe('ReasoningConfig type', () => {
   it('should be assignable with valid effort values', () => {
     const configs: ReasoningConfig[] = [
@@ -174,5 +229,17 @@ describe('ReasoningConfig type', () => {
       { effort: 'xhigh' },
     ]
     expect(configs).toHaveLength(6)
+  })
+})
+
+describe('ProviderRouting type', () => {
+  it('should be assignable with valid routing configs', () => {
+    const configs: ProviderRouting[] = [
+      { only: ['azure'], zdr: true, allow_fallbacks: false },
+      { order: ['azure', 'openai'] },
+      { data_collection: 'deny' },
+      { ignore: ['openai'], zdr: true },
+    ]
+    expect(configs).toHaveLength(4)
   })
 })

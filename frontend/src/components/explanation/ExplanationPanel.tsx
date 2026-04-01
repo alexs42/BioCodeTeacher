@@ -6,7 +6,7 @@ import { Allotment } from 'allotment'
 import { Loader2, Sparkles, ArrowUp, ArrowDown, Brain, GitBranch, Microscope } from 'lucide-react'
 import { useCodeStore } from '../../store/codeStore'
 import { getFileContext, FileContextResponse, createExplanationStream } from '../../services/api'
-import { getModelById } from '../../config/models'
+import { getModelById, getApiModelId } from '../../config/models'
 import ChatBox from '../chat/ChatBox'
 import { ArchitecturePanel } from '../architecture/ArchitecturePanel'
 
@@ -90,6 +90,7 @@ export default function ExplanationPanel() {
     if (!apiKey || !repoId || !currentFile) return
     setIsAnalyzingFile(true)
     const model = getModelById(selectedModel)
+    const apiModel = model ? getApiModelId(model) : selectedModel
     const ws = createExplanationStream(
       (msg) => {
         if (msg.type === 'file_analyzed' || msg.type === 'error') {
@@ -107,8 +108,9 @@ export default function ExplanationPanel() {
       ws.send(JSON.stringify({
         type: 'analyze_file',
         api_key: apiKey,
-        model: selectedModel,
+        model: apiModel,
         reasoning_effort: model?.reasoning?.effort,
+        provider_routing: model?.providerRouting,
         repo_id: repoId,
         file_path: currentFile,
       }))

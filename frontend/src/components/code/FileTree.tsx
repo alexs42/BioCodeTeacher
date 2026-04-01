@@ -15,7 +15,7 @@ const getFileIcon = (language?: string) => {
     html: 'text-orange-500',
     css: 'text-blue-500',
     json: 'text-yellow-300',
-    markdown: 'text-gray-400',
+    markdown: 'text-ct-text-secondary',
   }
 
   const color = iconColors[language || ''] || 'text-ct-text-secondary'

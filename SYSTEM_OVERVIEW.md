@@ -1,12 +1,12 @@
-# CodeTeacher - System in Operation
+# BioCodeTeacher - System in Operation
 
 ## Application Interface Layout
 
 ```mermaid
 graph TB
-    subgraph UI["CodeTeacher Application Interface"]
+    subgraph UI["BioCodeTeacher Application Interface"]
         subgraph Header["🎓 Header Bar"]
-            Logo["CodeTeacher Logo"]
+            Logo["BioCodeTeacher Logo"]
             Theme["🌓 Dark/Light Toggle"]
             Settings["⚙️ Settings"]
         end
@@ -92,7 +92,7 @@ sequenceDiagram
 ```mermaid
 graph LR
     subgraph Step1["Step 1: Repository Loaded"]
-        A1["Repository: CodeTeacher/backend<br/>Files: 15 Python files<br/>Status: ✅ Ready"]
+        A1["Repository: BioCodeTeacher/backend<br/>Files: 15 Python files<br/>Status: ✅ Ready"]
     end
 
     subgraph Step2["Step 2: File Selected"]
@@ -252,7 +252,7 @@ gantt
 
 ## Summary
 
-This visualization shows CodeTeacher in operation with:
+This visualization shows BioCodeTeacher in operation with:
 
 1. **Split-panel interface** - Code on left, explanations on right (resizable)
 2. **Interactive file tree** - Click any file to view

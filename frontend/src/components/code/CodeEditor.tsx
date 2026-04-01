@@ -2,7 +2,7 @@ import { useRef, useCallback, useEffect } from 'react'
 import Editor, { OnMount } from '@monaco-editor/react'
 import { useCodeStore } from '../../store/codeStore'
 import { createExplanationStream, LineExplainRequest, RangeExplainRequest } from '../../services/api'
-import { getModelById } from '../../config/models'
+import { getModelById, getApiModelId } from '../../config/models'
 
 // Monaco language mapping
 const languageMap: Record<string, string> = {
@@ -100,12 +100,14 @@ export default function CodeEditor() {
 
       ws.onopen = () => {
         const modelConfig = getModelById(selectedModel)
+        const apiModel = modelConfig ? getApiModelId(modelConfig) : selectedModel
         if (target.type === 'line') {
           const request: LineExplainRequest = {
             type: 'line',
             api_key: apiKey,
-            model: selectedModel,
+            model: apiModel,
             reasoning_effort: modelConfig?.reasoning?.effort,
+            provider_routing: modelConfig?.providerRouting,
             repo_id: repoId,
             file_path: currentFile,
             line_number: target.line,
@@ -116,8 +118,9 @@ export default function CodeEditor() {
           const request: RangeExplainRequest = {
             type: 'range',
             api_key: apiKey,
-            model: selectedModel,
+            model: apiModel,
             reasoning_effort: modelConfig?.reasoning?.effort,
+            provider_routing: modelConfig?.providerRouting,
             repo_id: repoId,
             file_path: currentFile,
             start_line: target.start,

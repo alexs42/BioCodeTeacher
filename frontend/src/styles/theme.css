@@ -13,9 +13,9 @@
   --ct-bg: #060a10;
   --ct-surface: #0c1118;
   --ct-surface-2: #131a24;
-  --ct-border: #1a2536;
-  --ct-text: #dfe6f2;
-  --ct-text-secondary: #607590;
+  --ct-border: #243040;
+  --ct-text: #e2e8f0;
+  --ct-text-secondary: #8494a7;
 
   /* Primary: teal (fluorescence-inspired, GFP/FITC channel) */
   --ct-primary: #2dd4bf;
@@ -34,7 +34,7 @@
   --ct-code-bg: #060a10;
   --ct-code-keyword: #f472b6;
   --ct-code-string: #7dd3fc;
-  --ct-code-comment: #607590;
+  --ct-code-comment: #8494a7;
   --ct-code-function: #c4b5fd;
   --ct-code-number: #5eead4;
 
@@ -55,9 +55,9 @@
   --ct-bg: #f8fafb;
   --ct-surface: #eef2f5;
   --ct-surface-2: #e2e8ed;
-  --ct-border: #c8d4de;
+  --ct-border: #b8c4ce;
   --ct-text: #131a24;
-  --ct-text-secondary: #4a6175;
+  --ct-text-secondary: #3d5266;
   --ct-primary: #0d9488;
   --ct-accent: #6366f1;
   --ct-warm: #d97706;
@@ -70,7 +70,7 @@
   --ct-code-bg: #eef2f5;
   --ct-code-keyword: #be185d;
   --ct-code-string: #0c4a6e;
-  --ct-code-comment: #4a6175;
+  --ct-code-comment: #3d5266;
   --ct-code-function: #6d28d9;
   --ct-code-number: #0d9488;
 
@@ -131,38 +131,54 @@ code, pre, .font-mono {
   background: var(--ct-text-secondary);
 }
 
-/* ---- Split pane (Allotment sash) ---- */
+/* ---- Split pane (Allotment sash) ----
+   Allotment v1.20+ uses CSS Modules with hashed class names,
+   so we target via attribute selectors on the module prefix. */
 
-.sash-container .sash {
-  transition: background-color 0.2s ease !important;
+:root {
+  --focus-border: var(--ct-primary);
+  --sash-size: 8px;
+  --sash-hover-size: 6px;
 }
 
-.sash-container .sash:hover {
-  background-color: var(--ct-primary) !important;
+/* Visible default state — subtle line so users can find the handle */
+[class*="sash-module_sash"]::before {
+  background: var(--ct-border) !important;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+/* Bright teal on hover/drag — clear affordance */
+[class*="sash-module_sash"]:hover::before,
+[class*="sash-module_sash"][class*="sash-module_hover"]::before,
+[class*="sash-module_sash"][class*="sash-module_active"]::before {
+  background: var(--ct-primary) !important;
   box-shadow: 0 0 12px var(--ct-glow-primary);
 }
 
-/* Legacy Resizer classes */
-.Resizer {
-  background: var(--ct-border);
-  opacity: 1;
-  z-index: 1;
-  box-sizing: border-box;
-  background-clip: padding-box;
-  transition: background 0.2s ease;
-}
-.Resizer:hover { background: var(--ct-primary); }
-.Resizer.vertical { width: 6px; margin: 0 -3px; cursor: col-resize; }
-.Resizer.horizontal { height: 6px; margin: -3px 0; cursor: row-resize; }
-
 /* ---- Cell grid background texture (replaces dot grid) ----
-   Subtle radial pattern evoking cells under a microscope */
+   Subtle radial pattern evoking cells under a microscope.
+   Uses ::before pseudo-element so opacity only affects the
+   background pattern, not the text content inside the div. */
 
 .ct-dotgrid {
+  position: relative;
+}
+
+.ct-dotgrid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background-image:
     radial-gradient(ellipse 18px 18px at 12px 12px, transparent 7px, var(--ct-border) 7px, var(--ct-border) 7.4px, transparent 7.4px);
   background-size: 28px 28px;
   opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ct-dotgrid > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ---- Tier transition animations ---- */
@@ -229,12 +245,6 @@ code, pre, .font-mono {
   animation: cursor-blink 0.8s ease-in-out infinite;
   margin-left: 2px;
   vertical-align: text-bottom;
-}
-
-/* Legacy blink animation */
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
 }
 
 /* ---- Markdown content styling ---- */

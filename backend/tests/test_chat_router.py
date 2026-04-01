@@ -73,7 +73,7 @@ class TestChatEndpoint:
             "message": "hello",
         })
         assert response.status_code == 200
-        mock_service_cls.assert_called_once_with("test-key", "openai/gpt-5.4", "medium")
+        mock_service_cls.assert_called_once_with("test-key", "openai/gpt-5.4", "medium", None)
 
     @patch("routers.chat.OpenRouterService")
     def test_chat_with_file_context(self, mock_service_cls, client: TestClient, temp_repo: str):
@@ -205,4 +205,4 @@ class TestChatWebSocket:
             ws.receive_json()  # chunk
             ws.receive_json()  # end
 
-            mock_service_cls.assert_called_with("test-key", "openai/gpt-5.4", "medium")
+            mock_service_cls.assert_called_with("test-key", "openai/gpt-5.4", "medium", None)

@@ -58,7 +58,7 @@ async def chat(request: ChatRequest):
 
 Provide a helpful, educational response:"""
 
-        service = OpenRouterService(request.api_key, request.model, request.reasoning_effort)
+        service = OpenRouterService(request.api_key, request.model, request.reasoning_effort, getattr(request, 'provider_routing', None))
         response = await service.complete(prompt, CHAT_SYSTEM)
 
         # Check if response contains a mermaid diagram
@@ -153,7 +153,8 @@ Provide a helpful, educational response:"""
 
                 model = request.get("model", "anthropic/claude-opus-4.6")
                 reasoning_effort = request.get("reasoning_effort")
-                service = OpenRouterService(api_key, model, reasoning_effort)
+                provider_routing = request.get("provider_routing")
+                service = OpenRouterService(api_key, model, reasoning_effort, provider_routing)
                 async for chunk in service.stream_completion(prompt, CHAT_SYSTEM):
                     await websocket.send_json({
                         "type": "chunk",

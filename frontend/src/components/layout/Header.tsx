@@ -62,7 +62,7 @@ export default function Header() {
       <div
         className="h-14 flex items-center px-5 gap-5 relative z-10"
         style={{
-          background: 'linear-gradient(180deg, var(--ct-surface) 0%, rgba(12,17,24,0.95) 100%)',
+          background: 'linear-gradient(180deg, var(--ct-surface) 0%, var(--ct-bg) 100%)',
           borderBottom: '1px solid rgba(45,212,191,0.08)',
         }}
       >
@@ -127,7 +127,7 @@ export default function Header() {
             <div
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg max-w-md"
               style={{
-                background: 'rgba(6,10,16,0.7)',
+                background: 'var(--ct-bg)',
                 border: '1px solid var(--ct-border)',
               }}
             >
@@ -183,7 +183,7 @@ export default function Header() {
                 className="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-50"
                 style={{
                   background: 'var(--ct-primary)',
-                  color: '#060a10',
+                  color: 'var(--ct-bg)',
                 }}
               >
                 {isLoading ? 'Loading...' : 'Load'}
@@ -203,16 +203,16 @@ export default function Header() {
               onClick={() => setShowRepoInput(true)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200"
               style={{
-                background: 'rgba(6,10,16,0.5)',
+                background: 'var(--ct-bg)',
                 border: '1px solid var(--ct-border)',
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.borderColor = 'var(--ct-primary)'
-                e.currentTarget.style.background = 'rgba(45,212,191,0.04)'
+                e.currentTarget.style.background = 'var(--ct-glow-primary)'
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.borderColor = 'var(--ct-border)'
-                e.currentTarget.style.background = 'rgba(6,10,16,0.5)'
+                e.currentTarget.style.background = 'var(--ct-bg)'
               }}
             >
               <FolderOpen className="w-4 h-4" style={{ color: 'var(--ct-text-secondary)' }} />

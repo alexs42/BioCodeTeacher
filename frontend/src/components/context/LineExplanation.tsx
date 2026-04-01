@@ -10,7 +10,7 @@ import mermaid from 'mermaid'
 import { Loader2, ArrowUp, ArrowDown, GitBranch, Microscope } from 'lucide-react'
 import { useCodeStore } from '../../store/codeStore'
 import { getFileContext, FileContextResponse, createExplanationStream } from '../../services/api'
-import { getModelById } from '../../config/models'
+import { getModelById, getApiModelId } from '../../config/models'
 
 function MermaidDiagram({ chart }: { chart: string }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -52,6 +52,7 @@ export default function LineExplanation() {
     if (!apiKey || !repoId || !currentFile) return
     setIsAnalyzingFile(true)
     const model = getModelById(selectedModel)
+    const apiModel = model ? getApiModelId(model) : selectedModel
     const ws = createExplanationStream(
       (msg) => {
         if (msg.type === 'file_analyzed' || msg.type === 'error') {
@@ -68,8 +69,9 @@ export default function LineExplanation() {
       ws.send(JSON.stringify({
         type: 'analyze_file',
         api_key: apiKey,
-        model: selectedModel,
+        model: apiModel,
         reasoning_effort: model?.reasoning?.effort,
+        provider_routing: model?.providerRouting,
         repo_id: repoId,
         file_path: currentFile,
       }))

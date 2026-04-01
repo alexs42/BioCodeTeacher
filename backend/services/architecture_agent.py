@@ -217,11 +217,14 @@ class ArchitectureAgent:
                     path=comp.get("path", ""),
                     role=comp.get("role", ""),
                     dependencies=comp.get("dependencies", []),
+                    pipeline_stage=comp.get("pipeline_stage"),
                 ))
 
             summary = ArchitectureContextSummary(
                 repo_id=self.repo_id,
-                overview=analysis_json.get("data_flow", ""),
+                overview=analysis_json.get("data_flow", ""),  # data_flow used as overview
+                domain=analysis_json.get("domain", ""),
+                biological_decisions=analysis_json.get("biological_decisions", []),
                 components=components,
                 patterns=analysis_json.get("patterns", []),
                 context_block=context_block,
@@ -366,9 +369,10 @@ class ArchitectureAgent:
                           "_targets.R", "run_pipeline.sh", "run_analysis.py"}
         # Bioinformatics analysis pattern keywords in filenames
         bio_keywords = {"qc", "filter", "normalize", "cluster", "umap", "pca",
-                        "de", "differential", "trajectory", "velocity", "integrate",
+                        "differential", "trajectory", "velocity", "integrate",
                         "annotate", "celltype", "spatial", "segment", "pathology",
-                        "preprocess", "analysis", "workflow"}
+                        "preprocess", "analysis", "workflow", "deseq", "scanpy",
+                        "seurat", "anndata", "scrna", "scatac", "hvg"}
 
         for path in self.repo_path.rglob("*"):
             if not path.is_file():
@@ -391,7 +395,7 @@ class ArchitectureAgent:
                 selected.append(SelectedFile(path=rel, reason="Snakemake rule"))
             elif name.endswith('.nf'):
                 selected.append(SelectedFile(path=rel, reason="Nextflow process"))
-            elif name.endswith('.Rmd') or name.endswith('.qmd'):
+            elif name.endswith(('.Rmd', '.rmd', '.qmd')):
                 selected.append(SelectedFile(path=rel, reason="Analysis notebook (R)"))
             elif any(kw in stem for kw in bio_keywords):
                 selected.append(SelectedFile(path=rel, reason="Analysis step"))

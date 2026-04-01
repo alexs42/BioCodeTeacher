@@ -81,7 +81,7 @@ class TestExplainLineEndpoint:
             "line_number": 3,
         })
         assert response.status_code == 200
-        mock_service_cls.assert_called_once_with("test-key", "openai/gpt-5.4", "medium")
+        mock_service_cls.assert_called_once_with("test-key", "openai/gpt-5.4", "medium", None)
 
     @patch("routers.explain.OpenRouterService")
     def test_explain_line_default_model(self, mock_service_cls, client: TestClient, temp_repo: str):
@@ -100,7 +100,7 @@ class TestExplainLineEndpoint:
             "line_number": 4,
         })
         assert response.status_code == 200
-        mock_service_cls.assert_called_once_with("test-key", "anthropic/claude-opus-4.6", None)
+        mock_service_cls.assert_called_once_with("test-key", "anthropic/claude-opus-4.6", None, None)
 
     def test_explain_line_invalid_file(self, client: TestClient, temp_repo: str):
         """Explain line should fail for non-existent file."""
@@ -187,7 +187,7 @@ class TestExplainRangeEndpoint:
             "end_line": 5,
         })
         assert response.status_code == 200
-        mock_service_cls.assert_called_once_with("test-key", "openai/gpt-5.4", "high")
+        mock_service_cls.assert_called_once_with("test-key", "openai/gpt-5.4", "high", None)
 
 
 class TestArchitectureEndpoint:
@@ -227,7 +227,7 @@ class TestArchitectureEndpoint:
             "repo_id": repo_id,
         })
         assert response.status_code == 200
-        mock_service_cls.assert_called_once_with("test-key", "openai/gpt-5.4", "medium")
+        mock_service_cls.assert_called_once_with("test-key", "openai/gpt-5.4", "medium", None)
 
 
 class TestExplainWebSocket:
@@ -330,4 +330,4 @@ class TestExplainWebSocket:
             ws.receive_json()  # chunk
             ws.receive_json()  # end
 
-            mock_service_cls.assert_called_with("test-key", "openai/gpt-5.4", "medium")
+            mock_service_cls.assert_called_with("test-key", "openai/gpt-5.4", "medium", None)

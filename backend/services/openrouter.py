@@ -26,7 +26,7 @@ class OpenRouterService:
     Supports configurable model selection and reasoning effort.
     """
 
-    def __init__(self, api_key: str, model: str = DEFAULT_MODEL, reasoning_effort: Optional[str] = None):
+    def __init__(self, api_key: str, model: str = DEFAULT_MODEL, reasoning_effort: Optional[str] = None, provider_routing: Optional[dict] = None):
         """
         Initialize OpenRouter service.
 
@@ -34,10 +34,12 @@ class OpenRouterService:
             api_key: OpenRouter API key
             model: Model ID to use (e.g., "anthropic/claude-opus-4.6")
             reasoning_effort: Optional reasoning effort level ("medium", "high", etc.)
+            provider_routing: Optional OpenRouter provider routing config (e.g., {"only": ["azure"], "zdr": true})
         """
         self.api_key = api_key
         self.model = model
         self.reasoning_effort = reasoning_effort
+        self.provider_routing = provider_routing
         self.headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
@@ -53,7 +55,7 @@ class OpenRouterService:
         temperature: float = 0.7,
     ) -> AsyncGenerator[str, None]:
         """
-        Stream a completion from Claude, yielding chunks as they arrive.
+        Stream a completion via OpenRouter, yielding chunks as they arrive.
 
         Args:
             prompt: The user prompt
@@ -80,6 +82,10 @@ class OpenRouterService:
         # Add reasoning effort for supported models
         if self.reasoning_effort and self.model in REASONING_MODELS:
             payload["reasoning"] = {"effort": self.reasoning_effort}
+
+        # Add provider routing (e.g., Azure-only with zero data retention)
+        if self.provider_routing:
+            payload["provider"] = self.provider_routing
 
         async with httpx.AsyncClient(timeout=120.0) as client:
             async with client.stream(
@@ -115,7 +121,7 @@ class OpenRouterService:
         temperature: float = 0.7,
     ) -> str:
         """
-        Get a complete (non-streaming) response from Claude.
+        Get a complete (non-streaming) response via OpenRouter.
 
         Args:
             prompt: The user prompt
@@ -142,6 +148,10 @@ class OpenRouterService:
         # Add reasoning effort for supported models
         if self.reasoning_effort and self.model in REASONING_MODELS:
             payload["reasoning"] = {"effort": self.reasoning_effort}
+
+        # Add provider routing (e.g., Azure-only with zero data retention)
+        if self.provider_routing:
+            payload["provider"] = self.provider_routing
 
         async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(
@@ -368,7 +378,7 @@ Produce a structured analysis as JSON:
   "patterns": ["list of patterns detected — both software patterns (pipeline, notebook-driven, config-driven) AND biological analysis patterns (standard scRNA-seq, integration workflow, spatial analysis, MIL classification)"],
   "data_flow": "Description of how biological data moves through the system — from raw input to biological insight (2-3 sentences). Note data formats used (h5ad, rds, csv, tiff, svs).",
   "entry_points": ["list of entry point files"],
-  "biological_decisions": ["list of key biological parameter choices or assumptions encoded in the code, e.g. 'Uses 2000 HVGs', 'Leiden resolution 0.8', 'Filters cells with >20%% mito'"],
+  "biological_decisions": ["list of key biological parameter choices or assumptions encoded in the code, e.g. 'Uses 2000 HVGs', 'Leiden resolution 0.8', 'Filters cells with >20% mito'"],
   "domain": "single-cell | spatial | pathology | multi-omics | genomics | other"
 }}"""
 

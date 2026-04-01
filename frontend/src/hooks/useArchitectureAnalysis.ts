@@ -6,7 +6,7 @@
 import { useCallback, useRef } from 'react'
 import { useCodeStore } from '../store/codeStore'
 import { createExplanationStream, AgentStreamMessage } from '../services/api'
-import { getModelById } from '../config/models'
+import { getModelById, getApiModelId } from '../config/models'
 
 export function useArchitectureAnalysis() {
   const {
@@ -34,6 +34,7 @@ export function useArchitectureAnalysis() {
     }
 
     const model = getModelById(selectedModel)
+    const apiModel = model ? getApiModelId(model) : selectedModel
     const reasoning = model?.reasoning?.effort
 
     const ws = createExplanationStream(
@@ -70,8 +71,9 @@ export function useArchitectureAnalysis() {
       ws.send(JSON.stringify({
         type: 'architecture_agent',
         api_key: apiKey,
-        model: selectedModel,
+        model: apiModel,
         reasoning_effort: reasoning,
+        provider_routing: model?.providerRouting,
         repo_id: repoId,
       }))
     }

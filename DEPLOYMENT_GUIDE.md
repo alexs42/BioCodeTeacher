@@ -1,10 +1,10 @@
-# CodeTeacher - Getting Started (Windows)
+# BioCodeTeacher - Getting Started
 
-CodeTeacher is an AI-powered tool that explains code to you line by line. You point it at any project folder, click on a line of code, and it tells you what that line does and why.
+BioCodeTeacher is an AI-powered bioinformatics code educator for single-cell, spatial transcriptomics, and digital pathology analysis. You point it at any project folder, click on a line of code, and it tells you what that line does and why it matters biologically.
 
-This guide walks you through every step from a fresh Windows machine to a running app.
+This guide walks you through every step from a fresh machine to a running app.
 
-There are **two ways** to run CodeTeacher:
+There are **two ways** to run BioCodeTeacher:
 
 | Method | Best for | Requirements |
 |--------|----------|-------------|
@@ -15,32 +15,32 @@ There are **two ways** to run CodeTeacher:
 
 ## Option A: Standalone Executable (Easiest)
 
-If someone has given you a `CodeTeacher.zip` file (or you downloaded a release), this is all you need:
+If someone has given you a `BioCodeTeacher.zip` file (or you downloaded a release), this is all you need:
 
 ### Step 1: Unzip
 
 1. Right-click the `.zip` file and click **"Extract All"**
-2. Choose a location (e.g., your Desktop or `C:\CodeTeacher`)
-3. Open the extracted folder — you should see `CodeTeacher.exe`
+2. Choose a location (e.g., your Desktop or `C:\BioCodeTeacher`)
+3. Open the extracted folder — you should see `BioCodeTeacher.exe`
 
 ### Step 2: Get an OpenRouter API Key
 
-CodeTeacher uses AI models (Claude, GPT, Gemini) through a service called OpenRouter. You need a free account and a small amount of credit.
+BioCodeTeacher uses AI models (Claude, GPT, Gemini) through a service called OpenRouter. You need a free account and a small amount of credit.
 
 1. Go to **https://openrouter.ai/**
 2. Click **"Sign Up"** and create an account (Google sign-in works)
 3. Go to **https://openrouter.ai/keys**
 4. Click **"Create Key"**
-5. **Copy the key** — it looks like `sk-or-v1-abc123...` (you'll paste it into CodeTeacher later)
+5. **Copy the key** — it looks like `sk-or-v1-abc123...` (you'll paste it into BioCodeTeacher later)
 6. Go to **https://openrouter.ai/credits** and add a small amount ($5 is plenty to start)
 
 > **Cost:** Each code explanation costs roughly $0.01-0.05. Architecture analysis costs about $0.10-0.20. $5 gives you hundreds of explanations.
 
 ### Step 3: Run
 
-1. **Double-click `CodeTeacher.exe`**
+1. **Double-click `BioCodeTeacher.exe`**
 2. A console window appears with the server status
-3. Your browser opens automatically to CodeTeacher
+3. Your browser opens automatically to BioCodeTeacher
 4. Paste your OpenRouter API key, choose a model, and click **"Get Started"**
 
 That's it! Skip ahead to **[Step 7: Load a Project](#step-7-load-a-project)** below.
@@ -55,11 +55,11 @@ That's it! Skip ahead to **[Step 7: Load a Project](#step-7-load-a-project)** be
 
 ## Option B: From Source (Developer Setup)
 
-This method requires installing Python and Node.js. Use this if you want to modify CodeTeacher or contribute to development.
+This method requires installing Python and Node.js. Use this if you want to modify BioCodeTeacher or contribute to development.
 
 ### Step 1: Install Python
 
-CodeTeacher's backend runs on Python. You need **Python 3.10, 3.11, 3.12, or 3.13**. Python 3.14 is too new and won't work yet (some dependencies don't have pre-built packages for it).
+BioCodeTeacher's backend runs on Python. You need **Python 3.10, 3.11, 3.12, or 3.13**. Python 3.14 is too new and won't work yet (some dependencies don't have pre-built packages for it).
 
 1. Go to **https://www.python.org/downloads/**
 2. Download **Python 3.12** or **3.13** (recommended — avoid 3.14 for now)
@@ -80,7 +80,7 @@ You should see something like `Python 3.12.x` or `Python 3.13.x`. If you see `'p
 
 ## Step 2: Install Node.js
 
-CodeTeacher's frontend runs on Node.js.
+BioCodeTeacher's frontend runs on Node.js.
 
 1. Go to **https://nodejs.org/**
 2. Click the **LTS** download button (the green one on the left)
@@ -98,30 +98,30 @@ You should see something like `v20.x.x`.
 
 ## Step 3: Get an OpenRouter API Key
 
-CodeTeacher uses AI models (Claude, GPT, Gemini) through a service called OpenRouter. You need a free account and a small amount of credit.
+BioCodeTeacher uses AI models (Claude, GPT, Gemini) through a service called OpenRouter. You need a free account and a small amount of credit.
 
 1. Go to **https://openrouter.ai/**
 2. Click **"Sign Up"** and create an account (Google sign-in works)
 3. Go to **https://openrouter.ai/keys**
 4. Click **"Create Key"**
-5. **Copy the key** — it looks like `sk-or-v1-abc123...` (you'll paste it into CodeTeacher later)
+5. **Copy the key** — it looks like `sk-or-v1-abc123...` (you'll paste it into BioCodeTeacher later)
 6. Go to **https://openrouter.ai/credits** and add a small amount ($5 is plenty to start)
 
 > **Cost:** Each code explanation costs roughly $0.01-0.05. Architecture analysis costs about $0.10-0.20. $5 gives you hundreds of explanations.
 
 ---
 
-## Step 4: Download CodeTeacher
+## Step 4: Download BioCodeTeacher
 
 You have two options:
 
 ### Option A: Download as ZIP (easiest)
 
-1. Go to **https://github.com/alexs42/CodeTeacher**
+1. Go to **https://github.com/alexs42/BioCodeTeacher**
 2. Click the green **"<> Code"** button
 3. Click **"Download ZIP"**
 4. Open the downloaded ZIP file
-5. Click **"Extract All"** and choose a location (e.g., your Desktop or `C:\CodeTeacher`)
+5. Click **"Extract All"** and choose a location (e.g., your Desktop or `C:\BioCodeTeacher`)
 6. Open the extracted folder — you should see files like `start.bat`, `README.md`, `backend/`, `frontend/`, etc.
 
 ### Option B: Clone with Git (if you have Git installed)
@@ -129,22 +129,22 @@ You have two options:
 Open Command Prompt and type:
 ```
 cd C:\
-git clone https://github.com/alexs42/CodeTeacher.git
-cd CodeTeacher
+git clone https://github.com/alexs42/BioCodeTeacher.git
+cd BioCodeTeacher
 ```
 
 ---
 
-## Step 5: Start CodeTeacher
+## Step 5: Start BioCodeTeacher
 
-1. Open the CodeTeacher folder in **File Explorer**
+1. Open the BioCodeTeacher folder in **File Explorer**
 2. **Double-click `start.bat`**
 
 That's it. Here's what happens:
 
 ```
 ==========================================
-  Starting CodeTeacher
+  Starting BioCodeTeacher
 ==========================================
 
 Backend will start in a separate window.
@@ -177,7 +177,7 @@ If you get errors, try running the servers one at a time:
 
 ---
 
-## Step 6: Set Up CodeTeacher (first time only)
+## Step 6: Set Up BioCodeTeacher (first time only)
 
 When the app opens in your browser, you'll see a **Welcome screen**.
 
@@ -202,13 +202,13 @@ Start with **Claude Opus 4.6** or **Gemini 3.0 Flash** if you want to save money
 
 ## Step 7: Load a Project
 
-Now you need to point CodeTeacher at some code.
+Now you need to point BioCodeTeacher at some code.
 
 1. Click **"Open Repository"** in the top-left
 2. Type a path, or click the **browse button** (hard drive icon) to navigate visually
-3. For example, try loading CodeTeacher itself:
+3. For example, try loading BioCodeTeacher itself:
    ```
-   C:\CodeTeacher
+   C:\BioCodeTeacher
    ```
 4. Click **"Load"**
 
@@ -216,13 +216,13 @@ A file tree appears on the left. On the right, **architecture analysis starts au
 
 > **Tip:** You can also paste a GitHub URL like `https://github.com/someone/project`.
 
-> **Tip:** The analysis is saved to disk (`C:\CodeTeacher\` folder). Next time you load the same project, the overview appears instantly.
+> **Tip:** The analysis is saved to disk (`C:\BioCodeTeacher\` folder). Next time you load the same project, the overview appears instantly.
 
 ---
 
 ## Step 8: Explore the Three-Tier Context
 
-CodeTeacher shows you progressively more detail as you drill into the code:
+BioCodeTeacher shows you progressively more detail as you drill into the code:
 
 ### Tier 1: Repository Overview (automatic)
 
@@ -268,23 +268,23 @@ There are also **quick action buttons** for common tasks:
 
 ---
 
-## Stopping CodeTeacher
+## Stopping BioCodeTeacher
 
 **If using the standalone exe:** Close the console window, or press **Ctrl+C**.
 
 **If running from source:**
 - Press **Ctrl+C** in the frontend window
-- Close the minimized "CodeTeacher Backend" window
+- Close the minimized "BioCodeTeacher Backend" window
 - Or just close both Command Prompt windows
 
 ---
 
-## Updating CodeTeacher
+## Updating BioCodeTeacher
 
 **If using the standalone exe:**
-1. Download the new `CodeTeacher.zip`
+1. Download the new `BioCodeTeacher.zip`
 2. Extract it to the same location (overwrite old files)
-3. Double-click `CodeTeacher.exe`
+3. Double-click `BioCodeTeacher.exe`
 
 **If you downloaded the source as ZIP:**
 1. Download the new ZIP from GitHub
@@ -293,30 +293,48 @@ There are also **quick action buttons** for common tasks:
 
 **If you used Git:**
 ```
-cd C:\CodeTeacher
+cd C:\BioCodeTeacher
 git pull
 start.bat
 ```
 
-## Building the Standalone Executable (for developers)
+## Building the Standalone Application (for developers)
 
-If you want to build the `.exe` yourself from source:
+### Windows
 
 1. Make sure **Python 3.10–3.13** and **Node.js** are installed (Steps 1-2 above)
-2. Open Command Prompt in the CodeTeacher folder
+2. Open Command Prompt in the BioCodeTeacher folder
 3. Run:
    ```
    build.bat
    ```
 4. Wait for the build to complete (takes a few minutes)
-5. The output is in `dist\CodeTeacher\` — zip this folder to distribute
+5. The output is in `dist\BioCodeTeacher\` — zip this folder to distribute
 
-The build script runs 5 steps:
-1. **Prerequisites** — finds a compatible Python (3.10–3.13) via the `py` launcher, checks npm
+### macOS
+
+1. Make sure **Python 3.10–3.13** and **Node.js** are installed
+2. Open Terminal in the BioCodeTeacher folder
+3. Run:
+   ```bash
+   ./build.sh
+   ```
+4. Wait for the build to complete
+5. Output: `dist/BioCodeTeacher.app` and `dist/BioCodeTeacher.dmg`
+6. First launch: right-click > Open to bypass Gatekeeper (unsigned app)
+
+To install: open the DMG and drag BioCodeTeacher to Applications.
+
+### How the build works
+
+Both platforms use `biocodeteacher.spec` (cross-platform PyInstaller spec):
+
+1. **Prerequisites** — finds Python 3.10–3.13, checks npm
 2. **Frontend build** — `npm install` + `npm run build`
-3. **Python environment** — creates `build_venv`, installs dependencies (fails fast if `pip install` errors)
-4. **Clean previous build** — removes old `dist\CodeTeacher\` with retries (handles Dropbox file locks)
-5. **PyInstaller** — bundles everything into `dist\CodeTeacher\CodeTeacher.exe`
+3. **Python environment** — creates `build_venv`, installs dependencies
+4. **Clean previous build** — removes old output (Windows has Dropbox retry loops)
+5. **PyInstaller** — bundles backend + frontend into a standalone app
+6. **DMG creation** (macOS only) — wraps `.app` into a `.dmg` with Applications shortcut
 
 ### Build troubleshooting
 
@@ -324,8 +342,9 @@ The build script runs 5 steps:
 |-------|-----|
 | `Python X.X is too new` | Install Python 3.12 or 3.13 alongside your current version |
 | `pip install failed` | Check internet connection; make sure you're on Python 3.10–3.13 |
-| `Cannot delete dist\CodeTeacher` | Pause Dropbox sync or close Explorer windows in that folder |
+| `Cannot delete dist\BioCodeTeacher` | Pause Dropbox sync or close Explorer windows in that folder |
 | `Frontend build failed` | Run `cd frontend && npm install` manually first |
+| macOS "app is damaged" | Right-click > Open to bypass Gatekeeper |
 
 ---
 
@@ -338,22 +357,22 @@ A: Your code is sent to OpenRouter's API for AI processing, the same way ChatGPT
 A: Each line explanation costs about $0.01-0.05 depending on the model. Architecture analysis costs $0.10-0.20. $5 of credit lasts a long time.
 
 **Q: Can I use it offline?**
-A: No. CodeTeacher requires an internet connection to call AI models through OpenRouter.
+A: No. BioCodeTeacher requires an internet connection to call AI models through OpenRouter.
 
 **Q: Can I use it with any programming language?**
-A: Yes. CodeTeacher supports 40+ languages including Python, JavaScript, TypeScript, Java, C/C++, Go, Rust, Ruby, PHP, Swift, Kotlin, and more.
+A: Yes. BioCodeTeacher supports 40+ languages including Python, JavaScript, TypeScript, Java, C/C++, Go, Rust, Ruby, PHP, Swift, Kotlin, and more.
 
 **Q: The explanations are wrong/confusing.**
 A: Try switching to a different AI model in Settings (gear icon). Claude Opus 4.6 generally gives the best results.
 
 **Q: Can I use my own OpenAI/Anthropic key directly?**
-A: No. CodeTeacher uses OpenRouter as a unified gateway. OpenRouter supports all major AI providers through a single API key.
+A: No. BioCodeTeacher uses OpenRouter as a unified gateway. OpenRouter supports all major AI providers through a single API key.
 
 ---
 
 ## Screenshot
 
-![CodeTeacher Interface](Screenshot%202026-02-10%20130144.png)
+![BioCodeTeacher Interface](Screenshot%202026-02-10%20130144.png)
 
 The interface has three main areas:
 - **Left:** File tree and code editor — browse files and click lines
