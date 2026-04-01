@@ -1,32 +1,56 @@
 import { useState } from 'react'
 import { X, Key, Github, ExternalLink, Eye, EyeOff, Sparkles } from 'lucide-react'
-import { useCodeStore } from '../../store/codeStore'
-import { DEFAULT_MODELS, getModelById } from '../../config/models'
+import { useCodeStore, ApiProvider } from '../../store/codeStore'
+import { getModelById, getModelsForProvider } from '../../config/models'
+
+const PROVIDER_INFO: Record<ApiProvider, { label: string; keyPrefix: string; keyUrl: string; keyLabel: string }> = {
+  openrouter: { label: 'OpenRouter', keyPrefix: 'sk-or-v1-...', keyUrl: 'https://openrouter.ai/keys', keyLabel: 'Get your API key from OpenRouter' },
+  openai: { label: 'OpenAI', keyPrefix: 'sk-...', keyUrl: 'https://platform.openai.com/api-keys', keyLabel: 'Get your API key from OpenAI' },
+  anthropic: { label: 'Anthropic', keyPrefix: 'sk-ant-...', keyUrl: 'https://console.anthropic.com/settings/keys', keyLabel: 'Get your API key from Anthropic' },
+}
 
 export default function SetupModal() {
   const {
     apiKey,
     githubToken,
     selectedModel,
+    selectedProvider,
+    apiKeys,
     customModels,
-    setApiKey,
+    setSelectedProvider,
     setGithubToken,
     setSelectedModel,
     setShowSetupModal
   } = useCodeStore()
 
-  const [tempApiKey, setTempApiKey] = useState(apiKey || '')
+  const [tempProvider, setTempProvider] = useState<ApiProvider>(selectedProvider)
+  const [tempApiKey, setTempApiKey] = useState(apiKeys[selectedProvider] || '')
   const [tempGithubToken, setTempGithubToken] = useState(githubToken || '')
   const [tempModel, setTempModel] = useState(selectedModel)
-  const [showApiKey, setShowApiKey] = useState(false)
+  const [showApiKeyField, setShowApiKeyField] = useState(false)
   const [showGithubToken, setShowGithubToken] = useState(false)
 
-  const allModels = [...DEFAULT_MODELS, ...customModels]
+  const providerModels = getModelsForProvider(tempProvider, customModels)
   const currentModel = getModelById(tempModel, customModels)
+
+  const handleProviderChange = (provider: ApiProvider) => {
+    setTempProvider(provider)
+    setTempApiKey(apiKeys[provider] || '')
+    // Switch to first model for the new provider if current model doesn't match
+    const available = getModelsForProvider(provider, customModels)
+    const currentStillValid = available.some(m => m.id === tempModel)
+    if (!currentStillValid && available.length > 0) {
+      setTempModel(available[0].id)
+    }
+  }
 
   const handleSave = () => {
     if (tempApiKey.trim()) {
-      setApiKey(tempApiKey.trim())
+      setSelectedProvider(tempProvider)
+      // Small delay to ensure provider is set before key
+      setTimeout(() => {
+        useCodeStore.getState().setApiKey(tempApiKey.trim())
+      }, 0)
     }
     if (tempGithubToken.trim()) {
       setGithubToken(tempGithubToken.trim())
@@ -38,6 +62,7 @@ export default function SetupModal() {
   }
 
   const canClose = !!apiKey
+  const info = PROVIDER_INFO[tempProvider]
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
@@ -60,38 +85,58 @@ export default function SetupModal() {
           {/* Introduction */}
           <p className="text-ct-text-secondary">
             BioCodeTeacher helps you understand bioinformatics code — single-cell analysis, spatial transcriptomics, digital pathology.
-            It explains the biological reasoning behind every line. Enter your OpenRouter API key to get started.
+            Choose your API provider and enter your key to get started.
           </p>
 
-          {/* OpenRouter API Key */}
+          {/* Provider Selector */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">API Provider</label>
+            <div className="grid grid-cols-3 gap-2">
+              {(Object.entries(PROVIDER_INFO) as [ApiProvider, typeof PROVIDER_INFO['openrouter']][]).map(([key, { label }]) => (
+                <button
+                  key={key}
+                  onClick={() => handleProviderChange(key)}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                    tempProvider === key
+                      ? 'bg-ct-primary/10 border-ct-primary text-ct-primary'
+                      : 'bg-ct-bg border-ct-border text-ct-text-secondary hover:border-ct-text-secondary'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* API Key */}
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm font-medium">
               <Key className="w-4 h-4 text-ct-primary" />
-              OpenRouter API Key
+              {info.label} API Key
               <span className="text-red-400">*</span>
             </label>
             <div className="relative">
               <input
-                type={showApiKey ? 'text' : 'password'}
+                type={showApiKeyField ? 'text' : 'password'}
                 value={tempApiKey}
                 onChange={(e) => setTempApiKey(e.target.value)}
-                placeholder="sk-or-v1-..."
+                placeholder={info.keyPrefix}
                 className="w-full px-4 py-3 bg-ct-bg border border-ct-border rounded-lg text-sm focus:outline-none focus:border-ct-primary pr-10"
               />
               <button
-                onClick={() => setShowApiKey(!showApiKey)}
+                onClick={() => setShowApiKeyField(!showApiKeyField)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-ct-text-secondary hover:text-ct-text"
               >
-                {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showApiKeyField ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
             <a
-              href="https://openrouter.ai/keys"
+              href={info.keyUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-xs text-ct-primary hover:underline"
             >
-              Get your API key from OpenRouter
+              {info.keyLabel}
               <ExternalLink className="w-3 h-3" />
             </a>
           </div>
@@ -107,9 +152,9 @@ export default function SetupModal() {
               onChange={(e) => setTempModel(e.target.value)}
               className="w-full px-4 py-3 bg-ct-bg border border-ct-border rounded-lg text-sm focus:outline-none focus:border-ct-primary"
             >
-              {allModels.map(model => (
+              {providerModels.map(model => (
                 <option key={model.id} value={model.id}>
-                  {model.name} {model.recommended ? '⭐ Recommended' : ''} {model.provider ? `(${model.provider})` : ''}
+                  {model.name} {model.recommended ? '* Recommended' : ''} {model.provider ? `(${model.provider})` : ''}
                 </option>
               ))}
             </select>

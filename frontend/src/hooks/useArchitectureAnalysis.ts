@@ -10,7 +10,7 @@ import { getModelById, getApiModelId } from '../config/models'
 
 export function useArchitectureAnalysis() {
   const {
-    apiKey, repoId, selectedModel,
+    apiKey, repoId, selectedModel, selectedProvider,
     setArchitectureAnalysis, appendArchitectureAnalysis,
     setArchitecturePhase, setIsAnalyzingArchitecture,
     setHasArchitectureContext, setActiveView,
@@ -74,12 +74,13 @@ export function useArchitectureAnalysis() {
         model: apiModel,
         reasoning_effort: reasoning,
         provider_routing: model?.providerRouting,
+        provider: selectedProvider,
         repo_id: repoId,
       }))
     }
 
     wsRef.current = ws
-  }, [apiKey, repoId, selectedModel, setArchitectureAnalysis, appendArchitectureAnalysis,
+  }, [apiKey, repoId, selectedModel, selectedProvider, setArchitectureAnalysis, appendArchitectureAnalysis,
       setArchitecturePhase, setIsAnalyzingArchitecture, setHasArchitectureContext, setActiveView])
 
   const cleanup = useCallback(() => {

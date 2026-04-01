@@ -84,7 +84,7 @@ export default function ExplanationPanel() {
     getFileContext(repoId, currentFile).then(setFileCtx).catch(() => setFileCtx(null))
   }, [repoId, currentFile, hasArchitectureContext])
 
-  const { apiKey, selectedModel } = useCodeStore()
+  const { apiKey, selectedModel, selectedProvider } = useCodeStore()
 
   const handleDeepAnalyze = useCallback(() => {
     if (!apiKey || !repoId || !currentFile) return
@@ -111,11 +111,12 @@ export default function ExplanationPanel() {
         model: apiModel,
         reasoning_effort: model?.reasoning?.effort,
         provider_routing: model?.providerRouting,
+        provider: selectedProvider,
         repo_id: repoId,
         file_path: currentFile,
       }))
     }
-  }, [apiKey, repoId, currentFile, selectedModel])
+  }, [apiKey, repoId, currentFile, selectedModel, selectedProvider])
 
   // Get the selected line(s) content
   const lines = fileContent?.split('\n') || []

@@ -18,7 +18,7 @@ import { useState } from 'react'
 
 export default function FileSummary() {
   const {
-    repoId, currentFile, fileLanguage, apiKey, selectedModel,
+    repoId, currentFile, fileLanguage, apiKey, selectedModel, selectedProvider,
     fileSummary, isGeneratingFileSummary,
     hasArchitectureContext,
     setFileSummary, appendFileSummary, setIsGeneratingFileSummary,
@@ -84,13 +84,14 @@ export default function FileSummary() {
         model: apiModel,
         reasoning_effort: model?.reasoning?.effort,
         provider_routing: model?.providerRouting,
+        provider: selectedProvider,
         repo_id: repoId,
         file_path: currentFile,
       }))
     }
 
     wsRef.current = ws
-  }, [apiKey, repoId, currentFile, selectedModel])
+  }, [apiKey, repoId, currentFile, selectedModel, selectedProvider])
 
   useEffect(() => {
     return () => {

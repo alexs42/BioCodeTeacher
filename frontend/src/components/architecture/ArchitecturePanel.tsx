@@ -39,7 +39,7 @@ function MermaidDiagram({ chart }: { chart: string }) {
 
 export function ArchitecturePanel() {
   const {
-    apiKey, repoId, selectedModel, architectureAnalysis,
+    apiKey, repoId, selectedModel, selectedProvider, architectureAnalysis,
     architecturePhase, architecturePhaseDetail,
     isAnalyzingArchitecture, hasArchitectureContext,
     setArchitectureAnalysis, appendArchitectureAnalysis,
@@ -124,12 +124,13 @@ export function ArchitecturePanel() {
         model: apiModel,
         reasoning_effort: reasoning,
         provider_routing: model?.providerRouting,
+        provider: selectedProvider,
         repo_id: repoId,
       }))
     }
 
     wsRef.current = ws
-  }, [apiKey, repoId, selectedModel, setArchitectureAnalysis, appendArchitectureAnalysis,
+  }, [apiKey, repoId, selectedModel, selectedProvider, setArchitectureAnalysis, appendArchitectureAnalysis,
       setArchitecturePhase, setIsAnalyzingArchitecture, setHasArchitectureContext, setActiveView])
 
   // Cleanup WebSocket on unmount

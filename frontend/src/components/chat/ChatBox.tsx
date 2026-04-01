@@ -25,6 +25,7 @@ export default function ChatBox() {
   const {
     apiKey,
     selectedModel,
+    selectedProvider,
     repoId,
     currentFile,
     selectedLine,
@@ -129,6 +130,7 @@ export default function ChatBox() {
         model: apiModel,
         reasoning_effort: modelConfig?.reasoning?.effort,
         provider_routing: modelConfig?.providerRouting,
+        provider: selectedProvider,
         repo_id: repoId,
         file_path: currentFile || undefined,
         line_range: lineRange,

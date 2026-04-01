@@ -33,7 +33,7 @@ export default function LineExplanation() {
   const {
     selectedLine, selectedRange, fileContent, currentFile,
     explanation, isExplaining, setSelectedLine,
-    repoId, hasArchitectureContext, apiKey, selectedModel,
+    repoId, hasArchitectureContext, apiKey, selectedModel, selectedProvider,
   } = useCodeStore()
 
   const contentRef = useRef<HTMLDivElement>(null)
@@ -72,11 +72,12 @@ export default function LineExplanation() {
         model: apiModel,
         reasoning_effort: model?.reasoning?.effort,
         provider_routing: model?.providerRouting,
+        provider: selectedProvider,
         repo_id: repoId,
         file_path: currentFile,
       }))
     }
-  }, [apiKey, repoId, currentFile, selectedModel])
+  }, [apiKey, repoId, currentFile, selectedModel, selectedProvider])
 
   const lines = fileContent?.split('\n') || []
   const isRange = !!selectedRange

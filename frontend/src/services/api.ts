@@ -192,6 +192,7 @@ export interface LineExplainRequest {
   model: string
   reasoning_effort?: string
   provider_routing?: ProviderRouting
+  provider?: string
   repo_id: string
   file_path: string
   line_number: number
@@ -204,6 +205,7 @@ export interface RangeExplainRequest {
   model: string
   reasoning_effort?: string
   provider_routing?: ProviderRouting
+  provider?: string
   repo_id: string
   file_path: string
   start_line: number
@@ -216,6 +218,7 @@ export interface ArchitectureRequest {
   model: string
   reasoning_effort?: string
   provider_routing?: ProviderRouting
+  provider?: string
   repo_id: string
 }
 
@@ -225,6 +228,7 @@ export interface ArchitectureAgentRequest {
   model: string
   reasoning_effort?: string
   provider_routing?: ProviderRouting
+  provider?: string
   repo_id: string
   max_files_to_analyze?: number
 }
@@ -257,6 +261,7 @@ export interface ChatStreamRequest {
   model: string
   reasoning_effort?: string
   provider_routing?: ProviderRouting
+  provider?: string
   repo_id: string
   file_path?: string
   line_range?: [number, number]
@@ -290,6 +295,7 @@ export interface FileSummaryRequest {
   model: string
   reasoning_effort?: string
   provider_routing?: ProviderRouting
+  provider?: string
   repo_id: string
   file_path: string
 }

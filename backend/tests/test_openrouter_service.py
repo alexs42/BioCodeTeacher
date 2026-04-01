@@ -14,7 +14,7 @@ from services.openrouter import (
     OpenRouterService,
     DEFAULT_MODEL,
     REASONING_MODELS,
-    OPENROUTER_API_URL,
+    PROVIDER_URLS,
     LINE_EXPLAIN_SYSTEM,
     LINE_EXPLAIN_TEMPLATE,
     ARCHITECTURE_SYSTEM,
@@ -34,7 +34,7 @@ class TestOpenRouterServiceConfig:
         """REASONING_MODELS should contain GPT-5.4 and Gemini 3.1 Pro."""
         assert "openai/gpt-5.4" in REASONING_MODELS
         assert "google/gemini-3.1-pro-preview" in REASONING_MODELS
-        assert len(REASONING_MODELS) == 2
+        assert len(REASONING_MODELS) == 3
 
     def test_init_with_defaults(self):
         """Service initializes with default model and no reasoning."""
@@ -61,9 +61,11 @@ class TestOpenRouterServiceConfig:
         assert service.headers["X-Title"] == "BioCodeTeacher"
         assert "HTTP-Referer" in service.headers
 
-    def test_api_url_constant(self):
-        """API URL should point to OpenRouter."""
-        assert OPENROUTER_API_URL == "https://openrouter.ai/api/v1/chat/completions"
+    def test_api_url_constants(self):
+        """API URLs should point to correct providers."""
+        assert PROVIDER_URLS["openrouter"] == "https://openrouter.ai/api/v1/chat/completions"
+        assert PROVIDER_URLS["openai"] == "https://api.openai.com/v1/chat/completions"
+        assert PROVIDER_URLS["anthropic"] == "https://api.anthropic.com/v1/messages"
 
 
 class TestOpenRouterPayloadConstruction:
@@ -238,7 +240,7 @@ class TestOpenRouterPayloadConstruction:
             mock_client.post = AsyncMock(return_value=mock_response)
             mock_client_cls.return_value = mock_client
 
-            with pytest.raises(Exception, match="OpenRouter API error"):
+            with pytest.raises(Exception, match="API error"):
                 await service.complete("test")
 
     @pytest.mark.asyncio

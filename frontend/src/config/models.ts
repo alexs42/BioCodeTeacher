@@ -1,7 +1,9 @@
 /**
- * Model configuration for OpenRouter integration.
- * Defines available AI models and their metadata.
+ * Model configuration for multi-provider LLM integration.
+ * Supports OpenRouter, OpenAI Direct, and Anthropic Direct.
  */
+
+export type ApiProvider = 'openrouter' | 'openai' | 'anthropic'
 
 export interface ReasoningConfig {
   effort: "none" | "minimal" | "low" | "medium" | "high" | "xhigh"
@@ -18,7 +20,7 @@ export interface ProviderRouting {
 
 export interface ModelOption {
   id: string
-  /** Override model ID sent to OpenRouter (when id is a virtual/internal key) */
+  /** Override model ID sent to API (when id is a virtual/internal key) */
   apiModelId?: string
   name: string
   provider: string
@@ -28,6 +30,8 @@ export interface ModelOption {
   isCustom?: boolean
   reasoning?: ReasoningConfig
   providerRouting?: ProviderRouting
+  /** Which direct API provider this model belongs to. undefined = OpenRouter only. */
+  directProvider?: ApiProvider
 }
 
 /** Get the model ID to send to OpenRouter (apiModelId if set, otherwise id). */
@@ -94,8 +98,60 @@ export const DEFAULT_MODELS: ModelOption[] = [
     provider: "Google",
     description: "High-speed thinking model for agentic workflows and coding, 1M context",
     contextWindow: 1048576
-  }
+  },
+  // ── OpenAI Direct models ──
+  {
+    id: "openai-direct/gpt-5.4",
+    apiModelId: "gpt-5.4",
+    name: "GPT-5.4",
+    provider: "OpenAI Direct",
+    description: "OpenAI's latest frontier model via direct API, 1M context",
+    contextWindow: 1050000,
+    reasoning: { effort: "medium" },
+    directProvider: "openai",
+  },
+  {
+    id: "openai-direct/gpt-5.4-mini",
+    apiModelId: "gpt-5.4-mini",
+    name: "GPT-5.4 Mini",
+    provider: "OpenAI Direct",
+    description: "Fast, affordable model for quick explanations",
+    contextWindow: 1050000,
+    directProvider: "openai",
+  },
+  // ── Anthropic Direct models ──
+  {
+    id: "anthropic-direct/claude-opus-4-6",
+    apiModelId: "claude-opus-4-6-20250514",
+    name: "Claude Opus 4.6",
+    provider: "Anthropic Direct",
+    description: "Anthropic's strongest model via direct API, 200K context",
+    contextWindow: 200000,
+    recommended: true,
+    directProvider: "anthropic",
+  },
+  {
+    id: "anthropic-direct/claude-sonnet-4-6",
+    apiModelId: "claude-sonnet-4-6-20250514",
+    name: "Claude Sonnet 4.6",
+    provider: "Anthropic Direct",
+    description: "Fast and capable via direct API, 200K context",
+    contextWindow: 200000,
+    directProvider: "anthropic",
+  },
 ]
+
+/**
+ * Get models available for a specific provider.
+ * OpenRouter models (no directProvider) shown only for openrouter.
+ * Direct models shown only for their specific provider.
+ */
+export function getModelsForProvider(provider: ApiProvider, customModels: ModelOption[] = []): ModelOption[] {
+  return [...DEFAULT_MODELS, ...customModels].filter(m => {
+    if (provider === 'openrouter') return !m.directProvider
+    return m.directProvider === provider
+  })
+}
 
 /**
  * Get a model by its ID.

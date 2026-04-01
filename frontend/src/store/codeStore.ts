@@ -2,6 +2,14 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { ModelOption, DEFAULT_MODELS, getDefaultModel } from '../config/models'
 
+export type ApiProvider = 'openrouter' | 'openai' | 'anthropic'
+
+export interface ApiKeys {
+  openrouter?: string
+  openai?: string
+  anthropic?: string
+}
+
 // Types
 export interface FileNode {
   name: string
@@ -25,8 +33,11 @@ export type { ModelOption }
 
 interface CodeStore {
   // API Configuration
-  apiKey: string | null
+  selectedProvider: ApiProvider
+  apiKeys: ApiKeys
+  apiKey: string | null  // derived: apiKeys[selectedProvider]
   githubToken: string | null
+  setSelectedProvider: (provider: ApiProvider) => void
   setApiKey: (key: string) => void
   setGithubToken: (token: string) => void
 
@@ -110,9 +121,19 @@ export const useCodeStore = create<CodeStore>()(
   persist(
     (set) => ({
       // API Configuration
-      apiKey: null,
+      selectedProvider: 'openrouter',
+      apiKeys: {},
+      apiKey: null,  // derived in setSelectedProvider / setApiKey
       githubToken: null,
-      setApiKey: (key) => set({ apiKey: key, showSetupModal: false }),
+      setSelectedProvider: (provider) => set((state) => ({
+        selectedProvider: provider,
+        apiKey: state.apiKeys[provider] || null,
+      })),
+      setApiKey: (key) => set((state) => ({
+        apiKeys: { ...state.apiKeys, [state.selectedProvider]: key },
+        apiKey: key,
+        showSetupModal: false,
+      })),
       setGithubToken: (token) => set({ githubToken: token }),
 
       // Model Selection
@@ -264,23 +285,35 @@ export const useCodeStore = create<CodeStore>()(
     }),
     {
       name: 'codeteacher-storage',
-      version: 2,
+      version: 3,
       partialize: (state) => ({
-        apiKey: state.apiKey,
+        selectedProvider: state.selectedProvider,
+        apiKeys: state.apiKeys,
         githubToken: state.githubToken,
         isDarkMode: state.isDarkMode,
         selectedModel: state.selectedModel,
         customModels: state.customModels,
         showSetupModal: state.showSetupModal,
       }),
+      onRehydrateStorage: () => (state) => {
+        // Derive apiKey from persisted apiKeys + selectedProvider
+        if (state) {
+          state.apiKey = state.apiKeys[state.selectedProvider] || null
+        }
+      },
       migrate: (persisted: any, version: number) => {
         if (version < 2) {
-          // v0/v1 → v2: model IDs changed (gpt-5.2/5.3-codex → gpt-5.4, gemini-3-pro → gemini-3.1-pro)
-          // Reset to default if stored model no longer exists
+          // v0/v1 → v2: model IDs changed
           const knownIds = DEFAULT_MODELS.map(m => m.id)
           if (persisted.selectedModel && !knownIds.includes(persisted.selectedModel)) {
             persisted.selectedModel = getDefaultModel().id
           }
+        }
+        if (version < 3) {
+          // v2 → v3: single apiKey → per-provider apiKeys
+          persisted.apiKeys = { openrouter: persisted.apiKey || undefined }
+          persisted.selectedProvider = 'openrouter'
+          delete persisted.apiKey
         }
         return persisted
       },

@@ -1,5 +1,5 @@
 """
-OpenRouter API service for frontier model interactions.
+LLM API service supporting OpenRouter, OpenAI, and Anthropic providers.
 Supports both streaming and non-streaming responses.
 Supports reasoning effort configuration for thinking models.
 """
@@ -8,44 +8,102 @@ import json
 from typing import AsyncGenerator, Optional
 import httpx
 
-# OpenRouter API configuration
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 DEFAULT_MODEL = "anthropic/claude-opus-4.6"
 
-# Models that support the reasoning.effort parameter
+# Provider API endpoints
+PROVIDER_URLS = {
+    "openrouter": "https://openrouter.ai/api/v1/chat/completions",
+    "openai": "https://api.openai.com/v1/chat/completions",
+    "anthropic": "https://api.anthropic.com/v1/messages",
+}
+
+# Models that support the reasoning.effort parameter (OpenRouter format)
 REASONING_MODELS = {
     "openai/gpt-5.4",
+    "gpt-5.4",
     "google/gemini-3.1-pro-preview",
 }
 
 
 class OpenRouterService:
     """
-    Service for interacting with AI models via OpenRouter API.
+    Service for interacting with AI models via OpenRouter, OpenAI, or Anthropic APIs.
     Handles streaming responses for real-time UI updates.
     Supports configurable model selection and reasoning effort.
     """
 
-    def __init__(self, api_key: str, model: str = DEFAULT_MODEL, reasoning_effort: Optional[str] = None, provider_routing: Optional[dict] = None):
-        """
-        Initialize OpenRouter service.
-
-        Args:
-            api_key: OpenRouter API key
-            model: Model ID to use (e.g., "anthropic/claude-opus-4.6")
-            reasoning_effort: Optional reasoning effort level ("medium", "high", etc.)
-            provider_routing: Optional OpenRouter provider routing config (e.g., {"only": ["azure"], "zdr": true})
-        """
+    def __init__(
+        self,
+        api_key: str,
+        model: str = DEFAULT_MODEL,
+        reasoning_effort: Optional[str] = None,
+        provider_routing: Optional[dict] = None,
+        provider: str = "openrouter",
+    ):
         self.api_key = api_key
         self.model = model
         self.reasoning_effort = reasoning_effort
         self.provider_routing = provider_routing
-        self.headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost:5173",  # Required by OpenRouter
-            "X-Title": "BioCodeTeacher",
-        }
+        self.provider = provider
+        self.api_url = PROVIDER_URLS.get(provider, PROVIDER_URLS["openrouter"])
+
+        # Build provider-specific headers
+        if provider == "anthropic":
+            self.headers = {
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "Content-Type": "application/json",
+            }
+        elif provider == "openai":
+            self.headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            }
+        else:  # openrouter
+            self.headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "http://localhost:5173",
+                "X-Title": "BioCodeTeacher",
+            }
+
+    def _build_payload(self, messages: list, max_tokens: int, temperature: float, stream: bool) -> dict:
+        """Build provider-appropriate request payload."""
+        if self.provider == "anthropic":
+            # Anthropic: system is a top-level param, not a message
+            system_text = ""
+            user_messages = []
+            for msg in messages:
+                if msg["role"] == "system":
+                    system_text = msg["content"]
+                else:
+                    user_messages.append(msg)
+            payload = {
+                "model": self.model,
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+                "messages": user_messages,
+                "stream": stream,
+            }
+            if system_text:
+                payload["system"] = system_text
+        else:
+            # OpenRouter and OpenAI: identical payload format
+            payload = {
+                "model": self.model,
+                "messages": messages,
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+                "stream": stream,
+            }
+            # Reasoning effort (OpenRouter and OpenAI direct)
+            if self.reasoning_effort and self.model in REASONING_MODELS:
+                payload["reasoning"] = {"effort": self.reasoning_effort}
+            # Provider routing (OpenRouter only)
+            if self.provider == "openrouter" and self.provider_routing:
+                payload["provider"] = self.provider_routing
+
+        return payload
 
     async def stream_completion(
         self,
@@ -54,64 +112,63 @@ class OpenRouterService:
         max_tokens: int = 4096,
         temperature: float = 0.7,
     ) -> AsyncGenerator[str, None]:
-        """
-        Stream a completion via OpenRouter, yielding chunks as they arrive.
-
-        Args:
-            prompt: The user prompt
-            system_prompt: Optional system prompt for context
-            max_tokens: Maximum tokens in response
-            temperature: Creativity setting (0-1)
-
-        Yields:
-            Text chunks as they stream in
-        """
+        """Stream a completion, yielding text chunks as they arrive."""
         messages = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
 
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "max_tokens": max_tokens,
-            "temperature": temperature,
-            "stream": True,
-        }
-
-        # Add reasoning effort for supported models
-        if self.reasoning_effort and self.model in REASONING_MODELS:
-            payload["reasoning"] = {"effort": self.reasoning_effort}
-
-        # Add provider routing (e.g., Azure-only with zero data retention)
-        if self.provider_routing:
-            payload["provider"] = self.provider_routing
+        payload = self._build_payload(messages, max_tokens, temperature, stream=True)
 
         async with httpx.AsyncClient(timeout=120.0) as client:
             async with client.stream(
-                "POST",
-                OPENROUTER_API_URL,
-                headers=self.headers,
-                json=payload,
+                "POST", self.api_url, headers=self.headers, json=payload,
             ) as response:
                 if response.status_code != 200:
                     error_text = await response.aread()
-                    raise Exception(f"OpenRouter API error: {response.status_code} - {error_text.decode()}")
+                    raise Exception(f"API error ({self.provider}): {response.status_code} - {error_text.decode()}")
 
-                async for line in response.aiter_lines():
-                    if line.startswith("data: "):
-                        data = line[6:]  # Remove "data: " prefix
-                        if data == "[DONE]":
-                            break
-                        try:
-                            chunk = json.loads(data)
-                            if "choices" in chunk and len(chunk["choices"]) > 0:
-                                delta = chunk["choices"][0].get("delta", {})
-                                content = delta.get("content", "")
-                                if content:
-                                    yield content
-                        except json.JSONDecodeError:
-                            continue
+                if self.provider == "anthropic":
+                    async for chunk in self._parse_anthropic_stream(response):
+                        yield chunk
+                else:
+                    async for chunk in self._parse_openai_stream(response):
+                        yield chunk
+
+    async def _parse_openai_stream(self, response) -> AsyncGenerator[str, None]:
+        """Parse OpenAI/OpenRouter SSE stream."""
+        async for line in response.aiter_lines():
+            if line.startswith("data: "):
+                data = line[6:]
+                if data == "[DONE]":
+                    break
+                try:
+                    chunk = json.loads(data)
+                    if "choices" in chunk and len(chunk["choices"]) > 0:
+                        content = chunk["choices"][0].get("delta", {}).get("content", "")
+                        if content:
+                            yield content
+                except json.JSONDecodeError:
+                    continue
+
+    async def _parse_anthropic_stream(self, response) -> AsyncGenerator[str, None]:
+        """Parse Anthropic SSE stream (event: type / data: json pairs)."""
+        event_type = ""
+        async for line in response.aiter_lines():
+            if line.startswith("event: "):
+                event_type = line[7:]
+            elif line.startswith("data: "):
+                data = line[6:]
+                if event_type == "content_block_delta":
+                    try:
+                        chunk = json.loads(data)
+                        text = chunk.get("delta", {}).get("text", "")
+                        if text:
+                            yield text
+                    except json.JSONDecodeError:
+                        continue
+                elif event_type == "message_stop":
+                    break
 
     async def complete(
         self,
@@ -120,62 +177,30 @@ class OpenRouterService:
         max_tokens: int = 4096,
         temperature: float = 0.7,
     ) -> str:
-        """
-        Get a complete (non-streaming) response via OpenRouter.
-
-        Args:
-            prompt: The user prompt
-            system_prompt: Optional system prompt
-            max_tokens: Maximum tokens in response
-            temperature: Creativity setting
-
-        Returns:
-            Complete response text
-        """
+        """Get a complete (non-streaming) response."""
         messages = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
 
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "max_tokens": max_tokens,
-            "temperature": temperature,
-            "stream": False,
-        }
-
-        # Add reasoning effort for supported models
-        if self.reasoning_effort and self.model in REASONING_MODELS:
-            payload["reasoning"] = {"effort": self.reasoning_effort}
-
-        # Add provider routing (e.g., Azure-only with zero data retention)
-        if self.provider_routing:
-            payload["provider"] = self.provider_routing
+        payload = self._build_payload(messages, max_tokens, temperature, stream=False)
 
         async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(
-                OPENROUTER_API_URL,
-                headers=self.headers,
-                json=payload,
+                self.api_url, headers=self.headers, json=payload,
             )
-
             if response.status_code != 200:
-                raise Exception(f"OpenRouter API error: {response.status_code} - {response.text}")
+                raise Exception(f"API error ({self.provider}): {response.status_code} - {response.text}")
 
             data = response.json()
+            if self.provider == "anthropic":
+                return data["content"][0]["text"]
             return data["choices"][0]["message"]["content"]
 
     async def validate_key(self) -> bool:
-        """
-        Validate that the API key is working.
-
-        Returns:
-            True if key is valid, False otherwise
-        """
+        """Validate that the API key is working."""
         try:
-            # Send a minimal request to validate
-            response = await self.complete(
+            await self.complete(
                 prompt="Say 'ok' and nothing else.",
                 max_tokens=10,
                 temperature=0,

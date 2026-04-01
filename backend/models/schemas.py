@@ -70,10 +70,10 @@ class FileContentResponse(BaseModel):
 
 class LineExplainRequest(BaseModel):
     """Request to explain a specific line."""
-    api_key: str = Field(..., description="OpenRouter API key")
+    api_key: str = Field(..., description="API key for the selected provider")
     model: str = Field(
         default="anthropic/claude-opus-4.6",
-        description="OpenRouter model ID to use"
+        description="Model ID to use"
     )
     reasoning_effort: Optional[str] = Field(
         default=None,
@@ -83,6 +83,7 @@ class LineExplainRequest(BaseModel):
         default=None,
         description="OpenRouter provider routing config (e.g., {only: ['azure'], zdr: true})"
     )
+    provider: Optional[str] = Field(default="openrouter", description="API provider: openrouter, openai, or anthropic")
     repo_id: str
     file_path: str
     line_number: int = Field(..., ge=1)
@@ -94,7 +95,7 @@ class RangeExplainRequest(BaseModel):
     api_key: str
     model: str = Field(
         default="anthropic/claude-opus-4.6",
-        description="OpenRouter model ID to use"
+        description="Model ID to use"
     )
     reasoning_effort: Optional[str] = Field(
         default=None,
@@ -104,6 +105,7 @@ class RangeExplainRequest(BaseModel):
         default=None,
         description="OpenRouter provider routing config"
     )
+    provider: Optional[str] = Field(default="openrouter", description="API provider: openrouter, openai, or anthropic")
     repo_id: str
     file_path: str
     start_line: int = Field(..., ge=1)
@@ -115,7 +117,7 @@ class ArchitectureRequest(BaseModel):
     api_key: str
     model: str = Field(
         default="anthropic/claude-opus-4.6",
-        description="OpenRouter model ID to use"
+        description="Model ID to use"
     )
     reasoning_effort: Optional[str] = Field(
         default=None,
@@ -125,6 +127,7 @@ class ArchitectureRequest(BaseModel):
         default=None,
         description="OpenRouter provider routing config"
     )
+    provider: Optional[str] = Field(default="openrouter", description="API provider: openrouter, openai, or anthropic")
     repo_id: str
     max_files: int = Field(default=50, ge=1, le=200)
 
@@ -163,7 +166,7 @@ class ChatRequest(BaseModel):
     api_key: str
     model: str = Field(
         default="anthropic/claude-opus-4.6",
-        description="OpenRouter model ID to use"
+        description="Model ID to use"
     )
     reasoning_effort: Optional[str] = Field(
         default=None,
@@ -173,6 +176,7 @@ class ChatRequest(BaseModel):
         default=None,
         description="OpenRouter provider routing config"
     )
+    provider: Optional[str] = Field(default="openrouter", description="API provider: openrouter, openai, or anthropic")
     repo_id: str
     file_path: Optional[str] = None
     line_range: Optional[tuple[int, int]] = None

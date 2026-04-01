@@ -66,7 +66,7 @@ async def explain_line(request: LineExplainRequest):
         )
 
         # Get explanation from AI model
-        service = OpenRouterService(request.api_key, request.model, request.reasoning_effort, getattr(request, 'provider_routing', None))
+        service = OpenRouterService(request.api_key, request.model, request.reasoning_effort, getattr(request, 'provider_routing', None), provider=getattr(request, 'provider', 'openrouter'))
         explanation = await service.complete(prompt, LINE_EXPLAIN_SYSTEM)
 
         # Cache the result
@@ -121,7 +121,7 @@ Explain this code block:
 ```
 """
 
-        service = OpenRouterService(request.api_key, request.model, request.reasoning_effort, getattr(request, 'provider_routing', None))
+        service = OpenRouterService(request.api_key, request.model, request.reasoning_effort, getattr(request, 'provider_routing', None), provider=getattr(request, 'provider', 'openrouter'))
         explanation = await service.complete(prompt, LINE_EXPLAIN_SYSTEM)
 
         return {"explanation": explanation}
@@ -181,7 +181,7 @@ async def explain_architecture(request: ArchitectureRequest):
             key_files_content=key_files_content,
         )
 
-        service = OpenRouterService(request.api_key, request.model, request.reasoning_effort, getattr(request, 'provider_routing', None))
+        service = OpenRouterService(request.api_key, request.model, request.reasoning_effort, getattr(request, 'provider_routing', None), provider=getattr(request, 'provider', 'openrouter'))
         analysis = await service.complete(prompt, ARCHITECTURE_SYSTEM, max_tokens=8000)
 
         return {"analysis": analysis}
@@ -368,7 +368,8 @@ async def stream_line_explanation(websocket: WebSocket, request: dict):
     model = request.get("model", "anthropic/claude-opus-4.6")
     reasoning_effort = request.get("reasoning_effort")
     provider_routing = request.get("provider_routing")
-    service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing)
+    provider = request.get("provider", "openrouter")
+    service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing, provider=provider)
     full_response = ""
 
     async for chunk in service.stream_completion(prompt, LINE_EXPLAIN_SYSTEM):
@@ -446,7 +447,8 @@ Explain this code block with these sections:
     model = request.get("model", "anthropic/claude-opus-4.6")
     reasoning_effort = request.get("reasoning_effort")
     provider_routing = request.get("provider_routing")
-    service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing)
+    provider = request.get("provider", "openrouter")
+    service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing, provider=provider)
 
     async for chunk in service.stream_completion(prompt, LINE_EXPLAIN_SYSTEM):
         await websocket.send_json({
@@ -509,7 +511,8 @@ async def stream_architecture_analysis(websocket: WebSocket, request: dict):
     model = request.get("model", "anthropic/claude-opus-4.6")
     reasoning_effort = request.get("reasoning_effort")
     provider_routing = request.get("provider_routing")
-    service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing)
+    provider = request.get("provider", "openrouter")
+    service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing, provider=provider)
 
     async for chunk in service.stream_completion(prompt, ARCHITECTURE_SYSTEM, max_tokens=8000):
         await websocket.send_json({
@@ -527,9 +530,10 @@ async def stream_architecture_agent(websocket: WebSocket, request: dict):
     model = request.get("model", "anthropic/claude-opus-4.6")
     reasoning_effort = request.get("reasoning_effort")
     provider_routing = request.get("provider_routing")
+    provider = request.get("provider", "openrouter")
     max_files = request.get("max_files_to_analyze", 15)
 
-    service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing)
+    service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing, provider=provider)
     agent = ArchitectureAgent(service, repo_id, repo_path, max_files=max_files)
 
     async for event in agent.analyze():
@@ -613,7 +617,8 @@ Respond with JSON only:
         model = request.get("model", "anthropic/claude-opus-4.6")
         reasoning_effort = request.get("reasoning_effort")
         provider_routing = request.get("provider_routing")
-        service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing)
+        provider = request.get("provider", "openrouter")
+        service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing, provider=provider)
         response = await service.complete(prompt, system_prompt="You are a software architect. Respond with valid JSON only.", max_tokens=500, temperature=0.3)
 
         # Parse response
@@ -723,7 +728,8 @@ async def stream_file_summary(websocket: WebSocket, request: dict):
         model = request.get("model", "anthropic/claude-opus-4.6")
         reasoning_effort = request.get("reasoning_effort")
         provider_routing = request.get("provider_routing")
-        service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing)
+        provider = request.get("provider", "openrouter")
+        service = OpenRouterService(request["api_key"], model, reasoning_effort, provider_routing, provider=provider)
 
         await websocket.send_json({"type": "start"})
 

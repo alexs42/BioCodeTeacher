@@ -47,6 +47,7 @@ export default function CodeEditor() {
     repoId,
     apiKey,
     selectedModel,
+    selectedProvider,
     setExplanation,
     setIsExplaining,
     appendExplanation,
@@ -108,6 +109,7 @@ export default function CodeEditor() {
             model: apiModel,
             reasoning_effort: modelConfig?.reasoning?.effort,
             provider_routing: modelConfig?.providerRouting,
+            provider: selectedProvider,
             repo_id: repoId,
             file_path: currentFile,
             line_number: target.line,
@@ -121,6 +123,7 @@ export default function CodeEditor() {
             model: apiModel,
             reasoning_effort: modelConfig?.reasoning?.effort,
             provider_routing: modelConfig?.providerRouting,
+            provider: selectedProvider,
             repo_id: repoId,
             file_path: currentFile,
             start_line: target.start,
@@ -132,7 +135,7 @@ export default function CodeEditor() {
 
       wsRef.current = ws
     },
-    [apiKey, selectedModel, repoId, currentFile, fileContent, setIsExplaining, setExplanation, appendExplanation]
+    [apiKey, selectedModel, selectedProvider, repoId, currentFile, fileContent, setIsExplaining, setExplanation, appendExplanation]
   )
 
   // Keep ref in sync so Monaco event handlers always call the latest version
