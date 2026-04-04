@@ -4,6 +4,10 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10--3.13-green) ![React](https://img.shields.io/badge/React-18+-61dafb) ![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178c6) ![Tests](https://img.shields.io/badge/Tests-179%20passing-brightgreen) ![License](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey)
 
+### **[>>> Download BioCodeTeacher v0.45 (Windows / macOS) <<<](https://github.com/alexs42/BioCodeTeacher/releases/tag/v0.45)**
+
+> No Python or Node.js required. Extract, run, paste your [OpenRouter API key](https://openrouter.ai/keys), done.
+
 Freely distributed for non-commercial use under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). No warranty expressed or implied.
 
 ## Why BioCodeTeacher?
