@@ -6,7 +6,7 @@
 
 ### **[>>> Download BioCodeTeacher v0.45 (Windows / macOS) <<<](https://github.com/alexs42/BioCodeTeacher/releases/tag/v0.45)**
 
-> No Python or Node.js required. Extract, run, paste your [OpenRouter API key](https://openrouter.ai/keys), done.
+> No Python or Node.js required. Extract, run, paste your API key ([OpenRouter](https://openrouter.ai/keys), [OpenAI](https://platform.openai.com/api-keys), or [Anthropic](https://console.anthropic.com/settings/keys)), done.
 
 Freely distributed for non-commercial use under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). No warranty expressed or implied.
 
