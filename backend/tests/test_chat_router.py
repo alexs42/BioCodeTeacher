@@ -206,3 +206,191 @@ class TestChatWebSocket:
             ws.receive_json()  # end
 
             mock_service_cls.assert_called_with("test-key", "openai/gpt-5.4", "medium", None, provider="openrouter")
+
+
+class TestChatContextInjection:
+    """Tests that chat prompts include repo/file context when available."""
+
+    @patch("routers.chat.architecture_store")
+    @patch("routers.chat.OpenRouterService")
+    def test_post_includes_architecture_context(
+        self, mock_service_cls, mock_arch_store, client: TestClient, temp_repo: str
+    ):
+        """POST chat should include architecture context in prompt."""
+        load_resp = client.post("/api/repos/load", json={"path": temp_repo})
+        repo_id = load_resp.json()["repo_id"]
+
+        # Architecture store returns file-level context
+        mock_arch_store.get_file_context.return_value = "This file handles QC filtering in the single-cell pipeline."
+        mock_arch_store.get_context_block.return_value = None
+
+        mock_instance = MagicMock()
+        mock_instance.complete = AsyncMock(return_value="response")
+        mock_service_cls.return_value = mock_instance
+
+        client.post("/api/chat/", json={
+            "api_key": "test-key",
+            "repo_id": repo_id,
+            "file_path": "main.py",
+            "message": "What does this do?",
+        })
+
+        # Verify the prompt passed to complete() contains architecture context
+        prompt_arg = mock_instance.complete.call_args[0][0]
+        assert "Project & File Context" in prompt_arg
+        assert "QC filtering" in prompt_arg
+
+    @patch("routers.chat.persistent_store")
+    @patch("routers.chat.architecture_store")
+    @patch("routers.chat.OpenRouterService")
+    def test_post_includes_file_summary(
+        self, mock_service_cls, mock_arch_store, mock_persist_store,
+        client: TestClient, temp_repo: str,
+    ):
+        """POST chat should include cached file summary in prompt."""
+        load_resp = client.post("/api/repos/load", json={"path": temp_repo})
+        repo_id = load_resp.json()["repo_id"]
+
+        mock_arch_store.get_file_context.return_value = None
+        mock_arch_store.get_context_block.return_value = None
+        mock_persist_store.get_repo_path.return_value = temp_repo
+        mock_persist_store.load_file_summary.return_value = {
+            "summary_md": "This file implements CPM normalization for scRNA-seq data using Scanpy."
+        }
+
+        mock_instance = MagicMock()
+        mock_instance.complete = AsyncMock(return_value="response")
+        mock_service_cls.return_value = mock_instance
+
+        client.post("/api/chat/", json={
+            "api_key": "test-key",
+            "repo_id": repo_id,
+            "file_path": "main.py",
+            "message": "Explain this",
+        })
+
+        prompt_arg = mock_instance.complete.call_args[0][0]
+        assert "File Summary" in prompt_arg
+        assert "CPM normalization" in prompt_arg
+
+    @patch("routers.chat.architecture_store")
+    @patch("routers.chat.OpenRouterService")
+    def test_post_falls_back_to_context_block(
+        self, mock_service_cls, mock_arch_store, client: TestClient, temp_repo: str
+    ):
+        """When no file context, should fall back to generic context block."""
+        load_resp = client.post("/api/repos/load", json={"path": temp_repo})
+        repo_id = load_resp.json()["repo_id"]
+
+        mock_arch_store.get_file_context.return_value = None
+        mock_arch_store.get_context_block.return_value = "Single-cell analysis pipeline using Scanpy."
+
+        mock_instance = MagicMock()
+        mock_instance.complete = AsyncMock(return_value="response")
+        mock_service_cls.return_value = mock_instance
+
+        client.post("/api/chat/", json={
+            "api_key": "test-key",
+            "repo_id": repo_id,
+            "file_path": "main.py",
+            "message": "hello",
+        })
+
+        prompt_arg = mock_instance.complete.call_args[0][0]
+        assert "Project & File Context" in prompt_arg
+        assert "Scanpy" in prompt_arg
+
+    @patch("routers.chat.architecture_store")
+    @patch("routers.chat.OpenRouterService")
+    def test_post_no_context_graceful(
+        self, mock_service_cls, mock_arch_store, client: TestClient, temp_repo: str
+    ):
+        """When no architecture analysis exists, prompt should work without context."""
+        load_resp = client.post("/api/repos/load", json={"path": temp_repo})
+        repo_id = load_resp.json()["repo_id"]
+
+        mock_arch_store.get_file_context.return_value = None
+        mock_arch_store.get_context_block.return_value = None
+
+        mock_instance = MagicMock()
+        mock_instance.complete = AsyncMock(return_value="response")
+        mock_service_cls.return_value = mock_instance
+
+        client.post("/api/chat/", json={
+            "api_key": "test-key",
+            "repo_id": repo_id,
+            "message": "hello",
+        })
+
+        prompt_arg = mock_instance.complete.call_args[0][0]
+        assert "Project & File Context" not in prompt_arg
+        assert "Code Context" in prompt_arg
+
+    @patch("routers.chat.architecture_store")
+    @patch("routers.chat.OpenRouterService")
+    def test_ws_includes_architecture_context(
+        self, mock_service_cls, mock_arch_store, client: TestClient, temp_repo: str
+    ):
+        """WebSocket chat should also include architecture context."""
+        load_resp = client.post("/api/repos/load", json={"path": temp_repo})
+        repo_id = load_resp.json()["repo_id"]
+
+        mock_arch_store.get_file_context.return_value = "Normalization step in pipeline."
+        mock_arch_store.get_context_block.return_value = None
+
+        captured_prompt = {}
+
+        async def mock_stream(prompt, *args, **kwargs):
+            captured_prompt["value"] = prompt
+            yield "ok"
+
+        mock_instance = MagicMock()
+        mock_instance.stream_completion = mock_stream
+        mock_service_cls.return_value = mock_instance
+
+        with client.websocket_connect("/api/chat/stream") as ws:
+            ws.send_json({
+                "api_key": "test-key",
+                "repo_id": repo_id,
+                "file_path": "main.py",
+                "message": "what is this?",
+                "history": [],
+            })
+
+            ws.receive_json()  # start
+            ws.receive_json()  # chunk
+            ws.receive_json()  # end
+
+        assert "Project & File Context" in captured_prompt["value"]
+        assert "Normalization step" in captured_prompt["value"]
+
+    @patch("routers.chat.architecture_store")
+    @patch("routers.chat.OpenRouterService")
+    def test_context_block_truncated_to_200_words(
+        self, mock_service_cls, mock_arch_store, client: TestClient, temp_repo: str
+    ):
+        """Context block should be truncated to 200 words max."""
+        load_resp = client.post("/api/repos/load", json={"path": temp_repo})
+        repo_id = load_resp.json()["repo_id"]
+
+        # Create a 300-word context block
+        long_block = " ".join(["word"] * 300)
+        mock_arch_store.get_file_context.return_value = None
+        mock_arch_store.get_context_block.return_value = long_block
+
+        mock_instance = MagicMock()
+        mock_instance.complete = AsyncMock(return_value="response")
+        mock_service_cls.return_value = mock_instance
+
+        client.post("/api/chat/", json={
+            "api_key": "test-key",
+            "repo_id": repo_id,
+            "file_path": "main.py",
+            "message": "hello",
+        })
+
+        prompt_arg = mock_instance.complete.call_args[0][0]
+        # The context block in the prompt should have at most 200 "word" tokens
+        context_section = prompt_arg.split("---")[0]
+        word_count = context_section.count("word")
+        assert word_count <= 200

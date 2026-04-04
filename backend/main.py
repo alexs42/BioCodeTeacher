@@ -27,7 +27,7 @@ def get_base_path() -> str:
 app = FastAPI(
     title="BioCodeTeacher API",
     description="Bioinformatics code explanation API for single-cell, spatial, and pathology analysis",
-    version="1.0.0",
+    version="0.45",
 )
 
 # CORS only needed in dev mode (separate frontend/backend ports)
@@ -52,7 +52,7 @@ async def health_check():
     """Detailed health check."""
     return {
         "status": "healthy",
-        "version": "1.0.0",
+        "version": "0.45",
         "features": {
             "streaming": True,
             "local_repos": True,
@@ -71,9 +71,12 @@ if IS_PRODUCTION:
     @app.get("/{full_path:path}")
     async def serve_spa(full_path: str):
         """Serve frontend SPA — try exact file first, fall back to index.html."""
-        file_path = os.path.join(_dist_path, full_path)
-        if full_path and os.path.isfile(file_path):
-            return FileResponse(file_path)
+        from pathlib import Path as _Path
+        dist_root = _Path(_dist_path).resolve()
+        candidate = (dist_root / full_path).resolve()
+        # Prevent path traversal outside frontend dist directory
+        if full_path and candidate.is_relative_to(dist_root) and candidate.is_file():
+            return FileResponse(str(candidate))
         return FileResponse(os.path.join(_dist_path, "index.html"))
 else:
     @app.get("/")

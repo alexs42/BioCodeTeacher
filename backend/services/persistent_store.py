@@ -152,6 +152,30 @@ class PersistentStore:
         except Exception:
             return None
 
+    # --- Documentation cache (global, not per-repo) ---
+
+    def _doc_cache_dir(self) -> Path:
+        d = self._base_dir / "doc_cache"
+        d.mkdir(parents=True, exist_ok=True)
+        return d
+
+    def save_doc_cache(self, cache_key: str, content: dict) -> None:
+        """Persist a documentation snippet to disk."""
+        _atomic_write(
+            self._doc_cache_dir() / f"{cache_key}.json",
+            json.dumps(content, indent=2),
+        )
+
+    def load_doc_cache(self, cache_key: str) -> Optional[dict]:
+        """Load a cached documentation snippet from disk."""
+        path = self._doc_cache_dir() / f"{cache_key}.json"
+        if not path.exists():
+            return None
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            return None
+
 
 # Global singleton
 persistent_store = PersistentStore()

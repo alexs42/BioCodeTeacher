@@ -1,7 +1,9 @@
 {
   "name": "biocodeteacher-frontend",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.45.0",
+  "author": "Aleks Stanic",
+  "license": "CC-BY-NC-4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

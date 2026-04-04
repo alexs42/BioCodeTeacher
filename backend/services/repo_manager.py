@@ -200,6 +200,10 @@ class RepoManager:
             if self._should_skip(entry, gitignore, repo_root):
                 continue
 
+            # Skip symlinks to prevent directory traversal escapes
+            if entry.is_symlink():
+                continue
+
             if entry.is_dir():
                 child_node, child_count = self._build_file_tree(
                     entry, repo_root, gitignore, max_depth, current_depth + 1
@@ -282,6 +286,11 @@ class RepoManager:
         try:
             # Modify URL for authentication if token provided
             if token:
+                # Validate URL is actually github.com before embedding token
+                from urllib.parse import urlsplit
+                parts = urlsplit(github_url)
+                if parts.scheme != "https" or parts.hostname not in ("github.com", "www.github.com"):
+                    raise ValueError("GitHub tokens can only be used with https://github.com URLs")
                 # Insert token into URL: https://TOKEN@github.com/user/repo.git
                 if github_url.startswith("https://"):
                     github_url = github_url.replace("https://", f"https://{token}@")
@@ -314,7 +323,11 @@ class RepoManager:
         except Exception as e:
             # Clean up on failure
             shutil.rmtree(temp_dir, ignore_errors=True)
-            raise ValueError(f"Failed to clone repository: {str(e)}")
+            # Redact token from error messages to prevent leakage
+            error_msg = str(e)
+            if token and token in error_msg:
+                error_msg = error_msg.replace(token, "***")
+            raise ValueError(f"Failed to clone repository: {error_msg}")
 
     def get_repo_path(self, repo_id: str) -> Path:
         """Get the root path for a loaded repository."""
@@ -334,7 +347,15 @@ class RepoManager:
             Dictionary with file content and metadata
         """
         repo_path = self.get_repo_path(repo_id)
-        full_path = repo_path / file_path
+        repo_root = repo_path.resolve()
+        full_path = (repo_root / file_path).resolve()
+
+        # Prevent path traversal outside repository root
+        if not full_path.is_relative_to(repo_root):
+            raise ValueError(f"Path escapes repository root: {file_path}")
+
+        if full_path.is_symlink():
+            raise ValueError(f"Symlinks are not allowed: {file_path}")
 
         if not full_path.exists():
             raise ValueError(f"File not found: {file_path}")

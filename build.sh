@@ -61,8 +61,8 @@ echo "[3/5] Setting up Python build environment..."
 cd "$SCRIPT_DIR"
 
 # Recreate venv if Python version changed or binary is missing
-if [[ -d "build_venv" && ! -x "build_venv/bin/python" ]]; then
-    echo "      build_venv is corrupted (missing python binary) — recreating..."
+if [[ -d "build_venv" ]] && ! build_venv/bin/python -m pip --version &>/dev/null; then
+    echo "      build_venv is corrupted (missing python or pip) — recreating..."
     rm -rf build_venv
 elif [[ -x "build_venv/bin/python" ]]; then
     VENV_VER=$(build_venv/bin/python --version 2>&1 | awk '{print $2}' | cut -d. -f1,2)
@@ -80,8 +80,8 @@ fi
 
 # Call venv binaries directly instead of 'source activate' to avoid
 # set -u conflicts with activate scripts and PATH pollution.
-build_venv/bin/pip install -q -r backend/requirements.txt
-build_venv/bin/pip install -q pyinstaller
+build_venv/bin/python -m pip install -q -r backend/requirements.txt
+build_venv/bin/python -m pip install -q pyinstaller
 
 echo "      Build environment: OK"
 

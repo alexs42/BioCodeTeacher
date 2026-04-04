@@ -63,7 +63,7 @@ class OpenRouterService:
             self.headers = {
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
-                "HTTP-Referer": "http://localhost:5173",
+                "HTTP-Referer": "https://github.com/alexs42/BioCodeTeacher",
                 "X-Title": "BioCodeTeacher",
             }
 
@@ -350,7 +350,38 @@ When they ask "how", show both the code AND the conceptual framework.
 Be proactive: anticipate follow-up questions and answer them. If they ask about normalization, also briefly mention why log-transform follows. If they ask about clustering, note that resolution choice is subjective.
 Reference line numbers. Use code blocks with syntax highlighting.
 Flag common pitfalls proactively: "By the way, if you're planning to do DE after this, remember to use pseudobulk — per-cell DE inflates significance."
-When relevant, tie concepts to real biological systems: immune responses, developmental trajectories, tissue architecture."""
+When relevant, tie concepts to real biological systems: immune responses, developmental trajectories, tissue architecture.
+
+When a **Project & File Context** block is provided, use it to:
+- Connect the student's question to the broader analysis pipeline (QC → normalization → HVG → PCA → integration → clustering → annotation → DE → trajectory)
+- Reference the file's role, dependencies, and pipeline stage
+- Note how the current code affects downstream analysis steps
+- Mention domain-specific considerations (single-cell, spatial, pathology) detected in the project
+
+When a **Current Documentation** block is provided, prefer it over your training data for parameter names, defaults, and API signatures. When no documentation is provided and you cite specific parameter defaults, note that the student should verify against their installed version's docs."""
+
+# ============ Chat Context Templates ============
+
+CHAT_CONTEXT_PREFIX = """**Project & File Context:**
+{context_block}
+
+---
+
+"""
+
+CHAT_FILE_SUMMARY_PREFIX = """**File Summary:**
+{file_summary}
+
+---
+
+"""
+
+CHAT_DOC_PREFIX = """**Current Documentation:**
+{documentation}
+
+---
+
+"""
 
 # ============ Architecture Agent Prompts ============
 

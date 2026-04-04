@@ -38,18 +38,24 @@ Thumbs.db
 
 # Environment
 .env
-.env.local
+.env.*
+!.env.example
 *.local
 
 # Testing
 .pytest_cache/
 .coverage
+coverage/
 htmlcov/
 .tox/
 .nox/
 .playwright/
 test-results/
 playwright-report/
+
+# Screenshots and binary docs
+*.png
+*.docx
 
 # Claude
 .claude/

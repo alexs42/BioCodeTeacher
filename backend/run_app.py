@@ -4,7 +4,6 @@ Starts uvicorn serving the FastAPI app and opens the default browser.
 """
 
 import sys
-import os
 import socket
 import webbrowser
 import threading

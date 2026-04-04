@@ -163,8 +163,8 @@ if IS_MACOS:
         bundle_identifier='com.biocodeteacher.app',
         info_plist={
             'CFBundleDisplayName': 'BioCodeTeacher',
-            'CFBundleShortVersionString': '1.0.0',
-            'CFBundleVersion': '1.0.0',
+            'CFBundleShortVersionString': '0.45',
+            'CFBundleVersion': '0.45',
             'NSHighResolutionCapable': True,
             'LSBackgroundOnly': False,
         },

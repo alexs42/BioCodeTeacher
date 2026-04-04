@@ -4,7 +4,7 @@
  * Version scheme: increment 0.01 for small changes, 0.1 for big ones.
  */
 
-export const APP_VERSION = '0.43'
+export const APP_VERSION = '0.45'
 
 export interface ChangelogEntry {
   version: string
@@ -13,6 +13,24 @@ export interface ChangelogEntry {
 }
 
 export const CHANGELOG: ChangelogEntry[] = [
+  {
+    version: '0.45',
+    date: '2026-04-03',
+    changes: [
+      'Public release preparation: CC BY-NC 4.0 license with AS-IS disclaimer',
+      'Version synchronization across all config files',
+      'Documentation and metadata cleanup for open-source distribution',
+    ],
+  },
+  {
+    version: '0.44',
+    date: '2026-04-02',
+    changes: [
+      'Chat now includes repo architecture context, file summaries, and pipeline stage awareness',
+      'Documentation search: auto-fetches API docs for Scanpy, AnnData, Squidpy, and 17 other libraries',
+      'Enhanced CHAT_SYSTEM prompt with architecture and documentation awareness',
+    ],
+  },
   {
     version: '0.43',
     date: '2026-04-01',

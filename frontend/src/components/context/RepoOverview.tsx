@@ -30,12 +30,26 @@ function MermaidDiagram({ chart }: { chart: string }) {
     const id = `mermaid-arch-${Math.random().toString(36).slice(2)}`
     try {
       mermaid.render(id, chart).then(({ svg }) => {
-        if (ref.current) ref.current.innerHTML = svg
+        // Mermaid's own SVG output is safe — it sanitizes internally
+        if (ref.current) ref.current.innerHTML = svg  // eslint-disable-line
       }).catch(() => {
-        if (ref.current) ref.current.innerHTML = `<pre class="text-xs text-ct-text-secondary">${chart}</pre>`
+        // Fallback: use textContent to prevent XSS from untrusted chart data
+        if (ref.current) {
+          ref.current.textContent = ''
+          const pre = document.createElement('pre')
+          pre.className = 'text-xs text-ct-text-secondary'
+          pre.textContent = chart
+          ref.current.appendChild(pre)
+        }
       })
     } catch {
-      if (ref.current) ref.current.innerHTML = `<pre class="text-xs text-ct-text-secondary">${chart}</pre>`
+      if (ref.current) {
+        ref.current.textContent = ''
+        const pre = document.createElement('pre')
+        pre.className = 'text-xs text-ct-text-secondary'
+        pre.textContent = chart
+        ref.current.appendChild(pre)
+      }
     }
   }, [chart])
   return <div ref={ref} className="my-3 flex justify-center" />

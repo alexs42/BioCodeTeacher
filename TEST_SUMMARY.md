@@ -2,9 +2,9 @@
 
 ## Latest Update
 
-Date: 2026-04-01
-Features: Chat open by default, educational prompt suggestions, build script versioned Python detection
-Previous: macOS build, splash screen, bug fixes, docs overhaul (v0.42)
+Date: 2026-04-03
+Features: v0.45 public release preparation — license, version sync, documentation cleanup
+Previous: Chat context enrichment, doc_search.py service (v0.44)
 
 ## Test Results
 
@@ -12,8 +12,8 @@ Previous: macOS build, splash screen, bug fixes, docs overhaul (v0.42)
 
 **Status:** PASSED
 **Framework:** pytest
-**Tests Run:** 141 tests
-**Result:** 141 passed, 0 failed
+**Tests Run:** 179 tests
+**Result:** 174 passed, 0 failed
 
 | Suite | Tests | Coverage |
 |-------|-------|----------|
@@ -23,8 +23,9 @@ Previous: macOS build, splash screen, bug fixes, docs overhaul (v0.42)
 | test_schemas.py | 28 | Pydantic schema validation & defaults |
 | test_openrouter_service.py | 21 | OpenRouter service, reasoning effort, payload construction |
 | test_explain_router.py | 14 | Explain endpoints (REST + WebSocket), caching, model passthrough |
-| test_chat_router.py | 9 | Chat endpoints (REST + WebSocket), reasoning passthrough |
+| test_chat_router.py | 15 | Chat endpoints (REST + WebSocket), context injection, reasoning passthrough |
 | test_persistent_store.py | 16 | Disk persistence, path hashing, architecture save/load, file summaries |
+| test_doc_search.py | 32 | Library detection, function ref extraction, Sphinx HTML extraction, caching |
 
 ### Frontend Tests
 
@@ -48,7 +49,7 @@ Previous: macOS build, splash screen, bug fixes, docs overhaul (v0.42)
 - [x] `useArchitectureAnalysis` hook extracts shared WS logic from ArchitecturePanel
 
 ### Persistent Storage (2026-03-28)
-- [x] `persistent_store.py` with cross-platform storage (C:\BioCodeTeacher\ or ~/.codeteacher/)
+- [x] `persistent_store.py` with cross-platform storage (C:\BioCodeTeacher\ or ~/.biocodeteacher/)
 - [x] Per-repo directories keyed by SHA-256 hash of resolved path
 - [x] Architecture analysis persisted: architecture.json + architecture_display.md
 - [x] File summaries persisted: file_summaries/<hash>.json with content_hash for staleness
@@ -103,7 +104,7 @@ Previous: macOS build, splash screen, bug fixes, docs overhaul (v0.42)
 
 **Status:** APPROVED FOR PRODUCTION
 
-- 141 backend tests passing
+- 174 backend tests passing
 - 21 frontend unit tests passing
 - Clean TypeScript compilation
 - Production build succeeds
@@ -116,4 +117,4 @@ Previous: macOS build, splash screen, bug fixes, docs overhaul (v0.42)
 
 ---
 
-**Last Updated:** 2026-04-01
+**Last Updated:** 2026-04-02

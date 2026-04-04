@@ -1,18 +1,18 @@
 {
   "name": "biocodeteacher",
-  "version": "1.0.0",
+  "version": "0.45.0",
   "description": "A bioinformatics code teaching tool powered by AI — helps graduate students and postdocs understand single-cell, spatial transcriptomics, and digital pathology code through interactive explanations.",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test:backend": "cd backend && pytest -q",
+    "test:frontend": "cd frontend && npx vitest run"
   },
   "repository": {
     "type": "git",
-    "url": "http://local_proxy@127.0.0.1:21149/git/alexs42/CodeTeacher"
+    "url": "https://github.com/alexs42/BioCodeTeacher.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["bioinformatics", "education", "single-cell", "scanpy", "code-explanation"],
+  "author": "Aleks Stanic",
+  "license": "CC-BY-NC-4.0",
   "devDependencies": {
     "@playwright/test": "^1.58.2"
   }

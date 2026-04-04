@@ -181,7 +181,7 @@ stateDiagram-v2
 
     Sending --> Streaming: WebSocket connection
     note right of Streaming
-        Context sent to Claude:<br/>- Current file: explain.py<br/>- Selected range: lines 42-45<br/>  (or single line +-5)<br/>- Question text<br/>- Chat history
+        Context sent to Claude:<br/>- Architecture context (file role, pipeline stage)<br/>- File summary (educational overview)<br/>- API docs (fetched from ReadTheDocs)<br/>- Current file: explain.py<br/>- Selected range: lines 42-45<br/>- Question text + Chat history
     end note
 
     Streaming --> Rendering: Chunks received

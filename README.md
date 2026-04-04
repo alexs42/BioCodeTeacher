@@ -1,8 +1,8 @@
 # BioCodeTeacher
 
-**v0.43** — An AI-powered educational tool that helps graduate students and postdocs understand bioinformatics code — not just *what* it does, but *why* it matters biologically. Provides deep, context-aware explanations for single-cell RNA-seq (Scanpy, Seurat), spatial transcriptomics (Squidpy, BANKSY), and digital pathology (OpenSlide, CLAM, PathML) codebases.
+**v0.45** — An AI-powered educational tool that helps graduate students and postdocs understand bioinformatics code — not just *what* it does, but *why* it matters biologically. Provides deep, context-aware explanations for single-cell RNA-seq (Scanpy, Seurat), spatial transcriptomics (Squidpy, BANKSY), and digital pathology (OpenSlide, CLAM, PathML) codebases.
 
-![Python](https://img.shields.io/badge/Python-3.10--3.13-green) ![React](https://img.shields.io/badge/React-18+-61dafb) ![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178c6) ![Tests](https://img.shields.io/badge/Tests-141%20passing-brightgreen) ![License](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey)
+![Python](https://img.shields.io/badge/Python-3.10--3.13-green) ![React](https://img.shields.io/badge/React-18+-61dafb) ![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178c6) ![Tests](https://img.shields.io/badge/Tests-179%20passing-brightgreen) ![License](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey)
 
 Freely distributed for non-commercial use under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). No warranty expressed or implied.
 
@@ -49,7 +49,7 @@ Breadcrumb navigation (`repo > file > line`) lets you move between tiers.
 - **Auto-Analysis on Load**: Architecture analysis starts automatically when you open a repo
 - **Persistent Analysis Cache**: Analysis stored to `C:\BioCodeTeacher\` (Windows) or `~/.biocodeteacher/` (Linux/Mac). Survives server restarts.
 - **Multi-Line Range Explanation**: Click and drag to select multiple lines for combined explanations
-- **Interactive Chat**: Context-aware bioinformatics conversations about the code you're viewing. Quick action buttons for common tasks.
+- **Interactive Chat**: Context-aware bioinformatics conversations enriched with repo architecture, file summaries, and live API documentation. Quick action buttons for common tasks.
 - **Folder Browser**: Navigate and select repositories visually instead of typing paths
 - **On-Demand Deep Analysis**: For files not in the initial analysis set, a "Deep analyze" button adds them to the architecture index with one LLM call
 - **Cache Staleness Detection**: Warns when analyzed files have been modified since the last analysis
@@ -62,7 +62,7 @@ Choose from 7 pre-configured frontier models via [OpenRouter](https://openrouter
 - **Claude Sonnet 4.6** — Fast and capable, 200K context
 - **GPT-5.4** — OpenAI with medium reasoning effort, 1M context
 - **GPT-5.4 Azure ZDR** — GPT-5.4 via Azure with zero data retention
-- **GLM-5 Turbo** — Open-source, competitive performance
+- **GLM-5 Turbo** — High-speed, competitive performance
 - **Gemini 3.1 Pro** — Google's flagship with thinking support, 1M context
 - **Gemini 3.0 Flash** — High-speed for quick explanations, 1M context
 
@@ -87,11 +87,11 @@ Frontend (React 18 / TypeScript / Vite)     Backend (FastAPI / Python 3.10-3.13)
 │   ├── architecture/PhaseTracker.tsx        │   ├── architecture_agent.py (4-phase)
 │   ├── chat/ChatBox.tsx                     │   ├── architecture_store.py (memory+disk)
 │   ├── code/CodeEditor.tsx                  │   ├── persistent_store.py (disk cache)
-│   └── layout/Header.tsx                    │   ├── repo_manager.py (Git/local)
-├── hooks/useArchitectureAnalysis.ts         │   ├── code_parser.py (imports)
-├── store/codeStore.ts (Zustand)             │   └── explanation_cache.py (LRU)
-├── config/version.ts (version + changelog)  └── models/schemas.py (Pydantic)
-├── services/api.ts (REST + WebSocket)
+│   └── layout/Header.tsx                    │   ├── doc_search.py (API doc fetcher)
+├── hooks/useArchitectureAnalysis.ts         │   ├── repo_manager.py (Git/local)
+├── store/codeStore.ts (Zustand)             │   ├── code_parser.py (imports)
+├── config/version.ts (version + changelog)  │   └── explanation_cache.py (LRU)
+├── services/api.ts (REST + WebSocket)       └── models/schemas.py (Pydantic)
 └── styles/theme.css (Research Lab theme)
 ```
 
@@ -158,7 +158,7 @@ Click breadcrumbs (`repo > file > line`) to navigate back up.
 
 ### Chat
 
-The chat panel is open and ready at the bottom — no expand click needed. The chat assistant has deep knowledge of single-cell analysis, spatial transcriptomics, and digital pathology. Educational prompt suggestions get you started immediately:
+The chat panel is open and ready at the bottom — no expand click needed. The chat assistant has deep knowledge of single-cell analysis, spatial transcriptomics, and digital pathology. Chat is enriched with 4 tiers of context: (1) file-specific architecture role, (2) project-level context block, (3) cached file summaries, and (4) live API documentation fetched from ReadTheDocs for referenced functions. Educational prompt suggestions get you started immediately:
 
 - **Teach me this repo** — architecture walkthrough with pros/cons
 - **Critique this code** — review with concrete improvement suggestions
@@ -224,7 +224,7 @@ Each repo directory contains `architecture.json`, `architecture_display.md`, `me
 
 ### Testing
 
-**Backend (141 tests):**
+**Backend (179 tests):**
 ```bash
 cd backend && pytest -q
 ```
@@ -237,8 +237,9 @@ cd backend && pytest -q
 | test_schemas.py | 28 | Pydantic schema validation |
 | test_openrouter_service.py | 21 | OpenRouter, reasoning, payloads |
 | test_explain_router.py | 14 | Explain endpoints + WebSocket |
-| test_chat_router.py | 9 | Chat endpoints |
+| test_chat_router.py | 15 | Chat endpoints + context injection |
 | test_persistent_store.py | 16 | Disk persistence, path hashing |
+| test_doc_search.py | 32 | Doc search: library detection, HTML extraction, caching |
 
 **Frontend (31 unit tests):**
 ```bash
@@ -287,6 +288,7 @@ Edit `frontend/src/config/models.ts` to add pre-configured models. For reasoning
 - **Model preferences**: Browser localStorage
 - **Architecture analysis**: Disk cache (`C:\BioCodeTeacher\` or `~/.biocodeteacher/`)
 - **File summaries**: Disk cache (per-repo, invalidated by file path hash)
+- **Documentation cache**: Disk cache (global `doc_cache/`, 24h TTL per entry)
 - **Explanation cache**: In-memory (cleared on restart)
 - **Chat history**: Session only (cleared on refresh)
 
@@ -306,7 +308,7 @@ BioCodeTeacher is a specialized fork of [CodeTeacher](https://github.com/alexs42
 
 This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)**.
 
-You are free to use, share, and adapt this software for non-commercial purposes. No warranty expressed or implied. See the [LICENSE](LICENSE) file for details.
+You are free to use, share, and adapt this software for non-commercial purposes. This software is provided "as is" without warranty of any kind. No license beyond CC BY-NC 4.0 is provided or implied. See the [LICENSE](LICENSE) file for full terms and disclaimer.
 
 ## Acknowledgments
 
