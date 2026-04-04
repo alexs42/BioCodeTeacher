@@ -4,9 +4,16 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10--3.13-green) ![React](https://img.shields.io/badge/React-18+-61dafb) ![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178c6) ![Tests](https://img.shields.io/badge/Tests-179%20passing-brightgreen) ![License](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey)
 
-### **[>>> Download BioCodeTeacher v0.45 (Windows / macOS) <<<](https://github.com/alexs42/BioCodeTeacher/releases/tag/v0.45)**
+## Download
 
-> No Python or Node.js required. Extract, run, paste your API key ([OpenRouter](https://openrouter.ai/keys), [OpenAI](https://platform.openai.com/api-keys), or [Anthropic](https://console.anthropic.com/settings/keys)), done.
+| Platform | Download | Size |
+|:--------:|:--------:|:----:|
+| **Windows** | **[BioCodeTeacher-v0.45-windows.zip](https://github.com/alexs42/BioCodeTeacher/releases/download/v0.45/BioCodeTeacher-v0.45-windows.zip)** | 19 MB |
+| **macOS** | **[BioCodeTeacher.dmg](https://github.com/alexs42/BioCodeTeacher/releases/download/v0.45/BioCodeTeacher.dmg)** | 21 MB |
+
+> **No Python or Node.js required.** Extract and run, then paste your API key ([OpenRouter](https://openrouter.ai/keys), [OpenAI](https://platform.openai.com/api-keys), or [Anthropic](https://console.anthropic.com/settings/keys)). That's it.
+>
+> macOS: right-click > Open on first launch (unsigned app).
 
 Freely distributed for non-commercial use under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). No warranty expressed or implied.
 
