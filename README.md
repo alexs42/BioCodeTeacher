@@ -19,7 +19,7 @@ Freely distributed for non-commercial use under [CC BY-NC 4.0](https://creativec
 
 ## Why BioCodeTeacher?
 
-Students can *run* tutorial code but can't *adapt* it to their own data. They copy-paste from Scanpy/Seurat tutorials, tweak parameters blindly, and don't understand the statistical or biological reasoning behind each step.
+We can *run* tutorial code but can't *adapt* it to our own data. Some copy-paste from Scanpy/Seurat tutorials, tweak parameters blindly, and don't understand the statistical or biological reasoning behind each step.
 
 A generic code explainer says:
 > "Calls `normalize_total` on `adata` with `target_sum` parameter..."
